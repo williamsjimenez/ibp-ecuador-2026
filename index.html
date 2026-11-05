@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Atlas interactivo del Índice de Bienestar Policial 1.0: 26 subzonas de Ecuador, índice global y cinco dimensiones.">
+  <title>Atlas IBP 1.0 | Ecuador</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="site-wrap mast-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span><div><span class="eyebrow">ATLAS TERRITORIAL · ECUADOR</span><div class="brand-name">Índice de Bienestar Policial <span>1.0</span></div></div></div>
+      <div class="version">Versión piloto · Noviembre de 2026</div>
+    </div>
+  </header>
+  <main class="site-wrap">
+    <section class="intro" aria-labelledby="main-title">
+      <div><div class="kicker">EXPLORADOR CARTOGRÁFICO</div><h1 id="main-title">El bienestar policial, visto desde el territorio.</h1><p>Consulta los resultados del índice global y sus cinco dimensiones para las <strong>26 subzonas policiales</strong>. Los colores son descriptivos; no representan categorías oficiales de riesgo ni clasificaciones institucionales.</p></div>
+      <div class="status"><div class="status-dot"></div><div><strong>Ejercicio en validación</strong><span>Información exploratoria. No constituye una medición representativa del personal policial.</span></div></div>
+    </section>
+    <section class="kpis" aria-label="Resumen de resultados del índice">
+      <article class="kpi"><span>Unidades territoriales</span><strong id="kpi-territories">26</strong><small>24 provinciales y 2 metropolitanas</small></article>
+      <article class="kpi"><span>Media del índice global</span><strong id="kpi-mean">47,28</strong><small>Media no ponderada de subzonas</small></article>
+      <article class="kpi"><span>Mediana del índice global</span><strong id="kpi-median">47,29</strong><small>Escala de 0 a 100 puntos</small></article>
+      <article class="kpi"><span>Dimensiones analizadas</span><strong>05</strong><small>30 indicadores en el modelo</small></article>
+    </section>
+    <section class="workspace" aria-label="Atlas interactivo">
+      <div class="workspace-header"><div><h2>Resultados por subzona</h2><p>Selecciona una dimensión y haz clic sobre cualquier territorio.</p></div><a class="download" href="./datos/resultados_26_subzonas.csv" download>↓ Descargar datos CSV</a></div>
+      <nav id="metrics" class="metrics" aria-label="Dimensión que se representa en el mapa"></nav>
+      <div class="filters">
+        <label>Zona policial <select id="zone-filter"><option value="all">Todas las zonas</option></select></label>
+        <label>Color según <select id="scale-filter"><option value="observed">Rango observado</option><option value="fixed">Escala fija de 0 a 100</option></select></label>
+        <label class="toggle"><input id="show-zones" type="checkbox"> <span>Mostrar límites zonales</span></label>
+      </div>
+      <div class="map-layout">
+        <div class="map-panel">
+          <div id="map" role="application" aria-label="Mapa interactivo de los resultados por subzona"></div>
+          <div class="map-top-actions" aria-label="Extensión del mapa"><button id="view-mainland">Continente</button><button id="view-islands">Galápagos</button><button id="view-all">Todo Ecuador</button></div>
+          <div class="map-caption"><div class="legend-name" id="legend-title">Índice global de bienestar policial</div><div class="legend-ramp" id="legend-ramp" aria-hidden="true"></div><div class="legend-values"><span id="legend-min">41,18</span><span id="legend-note">Colores relativos al rango observado</span><span id="legend-max">58,10</span></div></div>
+          <div class="map-footnote">Fondo blanco sin cartografía base. Las tres geometrías sin delimitación estadística no reciben puntuación.</div>
+        </div>
+        <aside class="inspector" aria-label="Ficha territorial">
+          <div class="inspector-top"><span class="section-tag">FICHA TERRITORIAL</span><h3 id="selected-name">Cañar</h3><div class="selected-zone" id="selected-zone">Zona 6</div></div>
+          <div class="focus"><div><span id="focus-label">Índice global</span><strong id="focus-score">58,10</strong></div><span>de 100 puntos</span></div>
+          <h4>Perfil de puntuaciones</h4><div id="profile" class="profile"></div>
+          <div id="proxy-note" class="proxy-note"></div>
+          <div class="subzone-browser"><div class="subzone-browser-header"><h4>Explorar subzonas</h4><span id="list-count">26 territorios</span></div><input id="subzone-search" type="search" placeholder="Buscar subzona…" aria-label="Buscar subzona"><div id="subzone-list" class="subzone-list"></div></div>
+        </aside>
+      </div>
+    </section>
+    <section class="reading-notes"><div><span class="section-tag">CÓMO INTERPRETAR</span><h2>Un instrumento de exploración, no un ranking.</h2><p>La puntuación global combina cinco dimensiones con ponderación igualitaria. La media describe las 26 subzonas con el mismo peso territorial y no el promedio del personal policial. Parte de los indicadores se construyó mediante valores provinciales o zonales transferidos a subzonas, por lo que no todos fueron observados directamente en cada territorio.</p><p>La encuesta institucional reunió <strong>1.419 registros</strong> y no corresponde a un muestreo probabilístico subzonal. Las puntuaciones requieren validación de indicadores, ponderaciones y proxies. Los contrastes cartográficos no demuestran diferencias poblacionales, causalidad ni cumplimiento de estándares institucionales.</p></div><div class="source-panel"><h3>Fuente y trazabilidad</h3><p><strong>Puntuaciones:</strong> Informe estadístico descriptivo del IBP 1.0, cuadro territorial completo, 4 de noviembre de 2026.</p><p><strong>Definiciones:</strong> Marco teórico y memoria metodológica del IBP 1.0.</p><p><strong>Límites:</strong> shapefile <em>subzonas.shp</em> aportado al proyecto, reproyectado a WGS84 y simplificado para la web. Las nueve zonas se reconstruyeron a partir de esas geometrías.</p><a href="./datos/metadatos.json" download>Descargar metadatos JSON ↗</a></div></section>
+  </main>
+  <footer class="footer"><div class="site-wrap footer-inner"><span>IBP 1.0 · Atlas de discusión científica</span><span>Prototipo cartográfico independiente · Datos 2025–2026</span></div></footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./datos.js"></script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+{
+  "proyecto": "Índice de Bienestar Policial 1.0",
+  "fecha": "2026-11-04",
+  "tipo": "Piloto exploratorio no validado",
+  "unidad": "subzona policial",
+  "total_subzonas": 26,
+  "subzonas_provinciales": 24,
+  "distritos_metropolitanos": [
+    "DMQ",
+    "DMG"
+  ],
+  "indice_global": "Media aritmética de cinco dimensiones con igual peso; no ponderada por dotación policial",
+  "muestras_encuesta": 1419,
+  "fuentes": [
+    "20261104_PNE_IBP_1_0_Informe_Estadistico_Resultados_26_Subzonas.docx, cuadro 3.1",
+    "20261104_PNE_IBP_1_0_Memoria_Metodologica_Sin_Protocolo_Delphi(1).docx",
+    "subzonas.zip, shapefile geográfico aportado"
+  ],
+  "limitaciones": [
+    "Puntuaciones piloto sujetas a validación por expertos, no son rankings oficiales",
+    "Promedio simple de subzonas, no representa el promedio del personal policial",
+    "Proxies provinciales y zonales presentes en algunas variables",
+    "La encuesta institucional no tiene representación probabilística subzonal",
+    "Las geometrías del archivo de origen se simplificaron para publicación web",
+    "Los límites geográficos reflejan el shapefile recibido y requieren validación cartográfica"
+  ],
+  "geometria": {
+    "origen": "subzonas.shp dentro de subzonas.zip",
+    "sistema_origen": "WGS84 / UTM 17S (EPSG:32717)",
+    "sistema_web": "WGS84 (EPSG:4326)",
+    "registros_en_origen": 29,
+    "excluidos": "3 polígonos con DPA_PROVIN=90 (zonas no delimitadas), sin IBP",
+    "archivo_zonas_incompleto": "ZONAS.zip no contiene ZONAS.shp; capa de zonas reconstruida por disolución de las 26 subzonas"
+  }
+}
