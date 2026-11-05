@@ -13,32 +13,42 @@
     ['D5','D5 · Cognitiva y ética','Bienestar cognitivo, espiritual y ético institucional']
   ];
   const lookup = Object.fromEntries(metrics.map(m=>[m[0], {label:m[1],long:m[2]}]));
-  const definitions = {
-    IBP: {
-      meaning:'Sintetiza, con el mismo peso, las cinco dimensiones del índice y los 30 indicadores que las componen. No expresa el porcentaje de policías satisfechos o con bienestar.',
-      brief:'Síntesis de cinco dimensiones del bienestar policial.'
-    },
-    D1: {
-      meaning:'Describe condiciones físicas y de salud vinculadas con infraestructura, operatividad de instalaciones, descanso, acceso a atención sanitaria y dotación de protección. No equivale a un diagnóstico clínico de los policías.',
-      brief:'Infraestructura, descanso, atención sanitaria y protección.'
-    },
-    D2: {
-      meaning:'Reúne registros administrativos sobre seguimiento psicológico asociado al uso de la fuerza y percepciones de carga emocional y acceso al apoyo. No mide la prevalencia de trastornos de salud mental ni demuestra atención clínica efectiva.',
-      brief:'Seguimiento administrativo y percepciones de apoyo psicológico.'
-    },
-    D3: {
-      meaning:'Agrupa indicadores de habitabilidad y alojamiento, condiciones materiales de instalaciones, ingresos y vivienda familiar. No representa la proporción de policías que disponen de una vivienda adecuada.',
-      brief:'Alojamiento, habitabilidad, vivienda e ingresos.'
-    },
-    D4: {
-      meaning:'Combina recursos de las sedes de capacitación con percepciones sobre formación y transparencia de ascensos. Las diferencias pueden ser sensibles a la disponibilidad de equipamiento en pocas sedes, sin medir por sí solas la calidad de la carrera.',
-      brief:'Recursos de formación, capacitación y ascensos.'
-    },
-    D5: {
-      meaning:'Resume respuestas de encuesta sobre formación doctrinal, identificación con la misión policial, toma de decisiones y dilemas éticos. La dimensión espiritual no dispone de medición directa suficiente en esta versión.',
-      brief:'Doctrina, decisiones, misión y ética percibidas.'
-    }
+  const dimensionTopics = {
+    D1:{name:'bienestar físico y salud',items:'infraestructura, operatividad de instalaciones, descanso, acceso a salud y dotación de protección'},
+    D2:{name:'bienestar psicológico, mental y emocional',items:'seguimiento psicológico registrado, carga emocional, confianza y acceso a servicios de apoyo'},
+    D3:{name:'bienestar socioeconómico y habitabilidad',items:'alojamiento, habitabilidad, ingresos y condiciones de vivienda'},
+    D4:{name:'desarrollo profesional y carrera',items:'recursos de capacitación, pertinencia de la formación y percepción de ascensos'},
+    D5:{name:'bienestar cognitivo y ética institucional',items:'formación doctrinal, misión institucional, toma de decisiones y dilemas éticos'}
   };
+  function interpretationFor(p,key) {
+    if (key === 'IBP') {
+      const dimensions = Object.entries(dimensionTopics).map(([code,info])=>({
+        code,name:info.name,score:p[code]
+      }));
+      const top=[...dimensions].sort((a,b)=>b.score-a.score).slice(0,2);
+      const bottom=[...dimensions].sort((a,b)=>a.score-b.score).slice(0,2);
+      return 'Los '+fmt(p.IBP)+' puntos del índice global de '+p.name+
+        ' combinan sus valores más altos en '+top[0].name+' ('+fmt(top[0].score)+
+        ' puntos) y '+top[1].name+' ('+fmt(top[1].score)+
+        ' puntos), con puntuaciones menores en '+bottom[0].name+' ('+fmt(bottom[0].score)+
+        ' puntos) y '+bottom[1].name+' ('+fmt(bottom[1].score)+
+        ' puntos). Este contraste entre dimensiones permite comprender el resultado agregado de la subzona.';
+    }
+    const info=dimensionTopics[key];
+    const dimensions=Object.keys(dimensionTopics).sort((a,b)=>p[b]-p[a]);
+    const position=dimensions.indexOf(key)+1;
+    const place=position===1?'la puntuación más alta':position===5?'la puntuación más baja':'la '+['','segunda','tercera','cuarta'][position-1]+' puntuación más alta';
+    return 'En '+p.name+', los '+fmt(p[key])+' puntos de '+info.name+
+      ' sintetizan los resultados sobre '+info.items+
+      '. Dentro del perfil de esta subzona, es '+place+' entre sus cinco dimensiones.';
+  }
+  function comparisonFor(p,key) {
+    const diff=p[key]-meanByMetric[key],distance=fmt(Math.abs(diff));
+    const national=fmt(meanByMetric[key]);
+    if(Math.abs(diff)<.005) return 'El resultado coincide con la media de referencia de las 26 subzonas, situada en '+national+' puntos.';
+    return 'Frente a la media de referencia de las 26 subzonas ('+national+
+      ' puntos), '+p.name+' se sitúa '+distance+' puntos '+(diff>0?'por encima':'por debajo')+'.';
+  }
   const colors = ['#e9f2f8','#c6ddea','#99bfd7','#639ac1','#3376a5','#104f80'];
   let metric='IBP', scale='observed', selected='Cañar', zone='all';
   let outlines=null;
@@ -101,8 +111,8 @@
     document.querySelector('#focus-label').textContent=lookup[metric].long;
     document.querySelector('#focus-score').textContent=fmt(p[metric]);
     document.querySelector('#reading-territory').textContent=p.name;
-    document.querySelector('#metric-meaning').textContent=definitions[metric].meaning+' La escala va de 0 a 100, donde una puntuación mayor es más favorable según la definición del índice.';
-    document.querySelector('#metric-comparison').textContent='En '+p.name+', el resultado es de '+fmt(p[metric])+' puntos; '+position(p[metric],metric)+'. La media de las 26 subzonas es de '+fmt(meanByMetric[metric])+' puntos.';
+    document.querySelector('#metric-meaning').textContent=interpretationFor(p,metric);
+    document.querySelector('#metric-comparison').textContent=comparisonFor(p,metric);
     document.querySelector('#proxy-note').textContent=proxyNote(p.name);
     const list=document.querySelector('#profile');list.replaceChildren();
     metrics.forEach(([key,label])=>{
