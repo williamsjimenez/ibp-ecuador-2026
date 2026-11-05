@@ -4,6 +4,11 @@
   const data = window.IBP_GEOJSON;
   if (!data || !window.L) { document.querySelector('#map').innerHTML='<p class="map-error">No se pudo iniciar el mapa. Comprueba tu conexión a internet para cargar la biblioteca cartográfica Leaflet.</p>'; return; }
   const all = data.features;
+  const indicatorData=window.IBP_INDICATORS || null;
+  const indicatorsAvailable=!!(indicatorData && indicatorData.catalog && indicatorData.data);
+  const catalogByDimension=indicatorsAvailable ?
+    Object.fromEntries(['D1','D2','D3','D4','D5'].map(key=>[key,indicatorData.catalog.filter(item=>item.dimension===key)])) : {};
+  let openDimension=null;
   const metrics = [
     ['IBP','Índice global','Índice global de bienestar policial'],
     ['D1','D1 · Física y salud','Bienestar físico y salud'],
@@ -166,41 +171,99 @@
     const list=document.querySelector('#profile');list.replaceChildren();
     metrics.forEach(([key,label])=>{
       const row=document.createElement('div');
-      row.className='profile-row'+(key===metric?' selected':'');
-      const title=document.createElement('div');
-      title.className='profile-label';
-      title.textContent=label;
-      const values=document.createElement('div');
-      values.className='profile-values';
+      row.className='profile-row'+(key===metric?' selected':'')+(openDimension===key?' expanded':'');
+      const trigger=document.createElement('button');
+      trigger.type='button';
+      trigger.className='profile-trigger';
+      const canExpand=key!=='IBP';
+      const isOpen=canExpand&&openDimension===key;
+      trigger.setAttribute('aria-expanded',String(isOpen));
+      trigger.setAttribute('aria-label',label+': '+fmt(p[key])+' puntos. '+(canExpand?'Abrir sus seis indicadores y ver la dimensión en el mapa.':'Ver índice global en el mapa.'));
+      const header=document.createElement('div');
+      header.className='profile-label-line';
+      const title=document.createElement('span');
+      title.className='profile-label';title.textContent=label;
+      const action=document.createElement('span');
+      action.className='profile-chevron';action.textContent=canExpand?(isOpen?'−':'+'):'';
+      action.setAttribute('aria-hidden','true');
+      header.append(title,action);
+      const values=document.createElement('div');values.className='profile-values';
       const number=(value,caption,kind)=>{
-        const cell=document.createElement('div');
-        cell.className='profile-stat '+kind;
-        const strong=document.createElement('strong');
-        strong.textContent=value;
-        const small=document.createElement('small');
-        small.textContent=caption;
-        cell.append(strong,small);
-        return cell;
+        const cell=document.createElement('div');cell.className='profile-stat '+kind;
+        const strong=document.createElement('strong');strong.textContent=value;
+        const small=document.createElement('small');small.textContent=caption;
+        cell.append(strong,small);return cell;
       };
       values.append(
         number(fmt(p[key]),'Subzona','stat-local'),
         number(fmt(meanByMetric[key]),'Media','stat-mean'),
         number(signed(delta(p[key],key)),'Diferencia','stat-delta')
       );
-      const track=document.createElement('div');
-      track.className='profile-track';
+      const track=document.createElement('div');track.className='profile-track';
       track.setAttribute('role','img');
-      track.setAttribute('aria-label',label+': '+fmt(p[key])+' puntos; media de 26 subzonas: '+fmt(meanByMetric[key])+'; diferencia: '+signed(delta(p[key],key))+' puntos');
-      const fill=document.createElement('div');
-      fill.className='profile-fill';
+      track.setAttribute('aria-label',label+': '+fmt(p[key])+' puntos; media de 26 subzonas '+fmt(meanByMetric[key])+' puntos');
+      const fill=document.createElement('div');fill.className='profile-fill';
       fill.style.width=p[key]+'%';
       fill.style.backgroundColor=colorForMetric(p[key],key);
-      const meanMark=document.createElement('div');
-      meanMark.className='profile-mean-mark';
+      const meanMark=document.createElement('div');meanMark.className='profile-mean-mark';
       meanMark.style.left=meanByMetric[key]+'%';
       meanMark.title='Media: '+fmt(meanByMetric[key]);
       track.append(fill,meanMark);
-      row.append(title,values,track);
+      trigger.append(header,values,track);
+      trigger.addEventListener('click',()=>{
+        const wasOpen=openDimension===key;
+        if(metric!==key)setMetric(key);
+        openDimension=(key==='IBP'||wasOpen)?null:key;
+        drawProfile();
+      });
+      row.appendChild(trigger);
+      if(isOpen){
+        const detail=document.createElement('div');
+        detail.className='indicator-details';
+        if(!indicatorsAvailable||!indicatorData.data[p.name]){
+          const unavailable=document.createElement('p');
+          unavailable.className='indicator-unavailable';
+          unavailable.textContent='No fue posible cargar los resultados de los indicadores de esta subzona.';
+          detail.appendChild(unavailable);
+        }else{
+          const guide=document.createElement('div');guide.className='indicator-guide';
+          guide.textContent='Indicadores de '+p.name+' · puntuación normalizada y media de las 26 subzonas';
+          detail.appendChild(guide);
+          for(const indicator of catalogByDimension[key]){
+            const record=indicatorData.data[p.name][indicator.code];
+            if(!record)continue;
+            const mean=indicatorData.mean[indicator.code];
+            const item=document.createElement('div');item.className='indicator-item';
+            const caption=document.createElement('div');caption.className='indicator-caption';
+            const id=document.createElement('strong');id.className='indicator-code';id.textContent=indicator.code;
+            const name=document.createElement('span');name.className='indicator-name';name.textContent=indicator.name;
+            caption.append(id,name);
+            const numbers=document.createElement('div');numbers.className='indicator-numbers';
+            const local=document.createElement('span');local.textContent=fmt(record.score);
+            local.title='Puntuación normalizada de '+p.name;
+            const national=document.createElement('span');national.textContent=fmt(mean);
+            national.title='Media aritmética de 26 subzonas';
+            const difference=document.createElement('span');difference.textContent=signed(record.score-mean);
+            difference.title='Diferencia en puntos frente a la media';
+            numbers.append(local,national,difference);
+            const labels=document.createElement('div');labels.className='indicator-numbers-labels';
+            ['Subzona','Media','Diferencia'].forEach(label=>{const s=document.createElement('span');s.textContent=label;labels.appendChild(s);});
+            const bar=document.createElement('div');bar.className='indicator-track';
+            const progress=document.createElement('div');progress.className='indicator-fill';
+            progress.style.width=record.score+'%';
+            const marker=document.createElement('div');marker.className='indicator-mean-marker';
+            marker.style.left=mean+'%';bar.append(progress,marker);
+            const source=document.createElement('div');source.className='indicator-original';
+            const original='Valor original: '+fmt(record.raw)+' %';
+            const inverse=indicator.direction==='BAJA'?' · puntuación invertida por ser un indicador desfavorable':'';
+            const scope=record.origin.startsWith('PROXY_ZONA')?' · valor zonal':record.origin.startsWith('PROXY_PROVINCIAL')?' · valor provincial':'';
+            source.textContent=original+inverse+scope;
+            item.append(caption,numbers,labels,bar,source);
+            detail.appendChild(item);
+          }
+        }
+        row.appendChild(detail);
+      }
       list.appendChild(row);
     });
   }
@@ -234,7 +297,7 @@
     });
   }
   function selectSubzone(name,zoom){if(!byName.has(name))return;selected=name;const f=byName.get(name);if(!zoneMatch(f.properties)){zone='all';document.querySelector('#zone-filter').value='all';}updateMap();drawProfile();drawList();if(zoom){geoLayer.eachLayer(l=>{if(l.feature.properties.name===name){map.fitBounds(l.getBounds(),{padding:[50,50],maxZoom:9});}});}}
-  function setMetric(key){if(!lookup[key])return;metric=key;document.querySelectorAll('.metric-btn').forEach(b=>{const active=b.dataset.metric===key;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});paintLegend();updateMap();drawProfile();drawList();}
+  function setMetric(key){if(!lookup[key])return;if(key!==metric)openDimension=null;metric=key;document.querySelectorAll('.metric-btn').forEach(b=>{const active=b.dataset.metric===key;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));});paintLegend();updateMap();drawProfile();drawList();}
   const nav=document.querySelector('#metrics');metrics.forEach(([key,label])=>{const b=document.createElement('button');b.className='metric-btn'+(key==='IBP'?' active':'');b.type='button';b.textContent=label;b.dataset.metric=key;b.setAttribute('aria-pressed',String(key==='IBP'));b.addEventListener('click',()=>setMetric(key));nav.appendChild(b);});
   const zsel=document.querySelector('#zone-filter');for(let z=1;z<=9;z++){const o=document.createElement('option');o.value=String(z);o.textContent='Zona '+z;zsel.appendChild(o)}
   zsel.addEventListener('change',e=>{zone=e.target.value;updateMap();drawList();if(zone!=='all'){const zoneFeatures=all.filter(f=>zoneMatch(f.properties));const group=L.geoJSON({type:'FeatureCollection',features:zoneFeatures});map.fitBounds(group.getBounds(),{padding:[25,25],maxZoom:9});}else map.fitBounds(bounds.mainland,{padding:[20,20]});});
