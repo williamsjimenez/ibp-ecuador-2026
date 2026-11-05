@@ -53,7 +53,7 @@
   const signed=(value)=>(value>0?'+':value<0?'−':'')+fmt(Math.abs(value));
   const position=(score,key)=>{
     const difference=delta(score,key);
-    return Math.abs(difference)<0.005?'coincide con la media de referencia':(fmt(Math.abs(difference))+' puntos '+(difference>0?'por encima':'por debajo')+' de la media de referencia');
+    return Math.abs(difference)<0.005?'coincide con la media de referencia':('se sitúa '+fmt(Math.abs(difference))+' puntos '+(difference>0?'por encima':'por debajo')+' de la media de referencia');
   };
   const tooltipHtml=(p)=>'<b>'+p.name+'</b><span>'+lookup[metric].long+': '+fmt(p[metric])+' / 100</span><span>Media nacional de referencia: '+fmt(meanByMetric[metric])+'</span><span>'+position(p[metric],metric)+'.</span>';
   const bounds = {
