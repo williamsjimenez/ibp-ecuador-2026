@@ -16,7 +16,7 @@
     window.IBP_GEOJSON = subzones;
     window.IBP_ZONES_GEOJSON = zones;
     const app = document.createElement('script');
-    app.src = './app.js?v=20261105-sin-advertencia';
+    app.src = './app.js?v=20261105-frase-eliminada-final';
     app.onerror = () => {
       if (mapElement) mapElement.textContent = 'No se pudo cargar la aplicación cartográfica.';
     };
