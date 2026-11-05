@@ -100,28 +100,28 @@
     document.querySelector('#selected-zone').textContent='Zona policial '+p.zone;
     document.querySelector('#focus-label').textContent=lookup[metric].long;
     document.querySelector('#focus-score').textContent=fmt(p[metric]);
+    document.querySelector('#reading-territory').textContent=p.name;
     document.querySelector('#metric-meaning').textContent=definitions[metric].meaning+' La escala va de 0 a 100, donde una puntuación mayor es más favorable según la definición del índice.';
-    document.querySelector('#metric-comparison').textContent='En '+p.name+', el valor de '+fmt(p[metric])+' puntos '+position(p[metric],metric)+', que es '+fmt(meanByMetric[metric])+' puntos. La comparación describe territorios, no diferencias comprobadas entre personas.';
+    document.querySelector('#metric-comparison').textContent='En '+p.name+', el resultado es de '+fmt(p[metric])+' puntos; '+position(p[metric],metric)+'. La media de las 26 subzonas es de '+fmt(meanByMetric[metric])+' puntos.';
     document.querySelector('#proxy-note').textContent=proxyNote(p.name);
     const list=document.querySelector('#profile');list.replaceChildren();
     metrics.forEach(([key,label])=>{
       const row=document.createElement('div');row.className='profile-row'+(key===metric?' selected':'');
       const head=document.createElement('div');head.className='profile-head';
-      const text=document.createElement('span');text.textContent=label;
-      const val=document.createElement('strong');val.textContent=fmt(p[key])+' / 100';
-      head.append(text,val);
+      const title=document.createElement('span');title.className='profile-label';title.textContent=label;
+      const values=document.createElement('div');values.className='profile-values';
+      const score=document.createElement('strong');score.textContent=fmt(p[key]);
+      const mean=document.createElement('span');mean.textContent=fmt(meanByMetric[key]);
+      values.append(score,mean);
+      head.append(title,values);
       const track=document.createElement('div');track.className='profile-track';
       const fill=document.createElement('div');fill.className='profile-fill';
       fill.style.width=p[key]+'%';
       const meanMark=document.createElement('div');meanMark.className='profile-mean-mark';
       meanMark.style.left=meanByMetric[key]+'%';
-      meanMark.title='Media nacional de referencia: '+fmt(meanByMetric[key]);
+      meanMark.title='Media: '+fmt(meanByMetric[key]);
       track.append(fill,meanMark);
-      const reference=document.createElement('p');reference.className='profile-reference';
-      reference.textContent='Media nacional de referencia: '+fmt(meanByMetric[key])+' · '+signed(delta(p[key],key))+' puntos';
-      const description=document.createElement('p');description.className='profile-description';
-      description.textContent=definitions[key].brief;
-      row.append(head,track,reference,description);
+      row.append(head,track);
       list.appendChild(row);
     });
   }
