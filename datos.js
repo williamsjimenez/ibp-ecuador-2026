@@ -22,7 +22,7 @@
     window.IBP_ZONES_GEOJSON = zones;
     window.IBP_INDICATORS = indicators;
     const app = document.createElement('script');
-    app.src = './app.js?v=20261105-frase-eliminada-final';
+    app.src = './app.js?v=20261105-indicadores';
     app.onerror = () => {
       if (mapElement) mapElement.textContent = 'No se pudo cargar la aplicación cartográfica.';
     };
