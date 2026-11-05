@@ -28,41 +28,64 @@
     return [...all].sort((a,b) => b.properties[key]-a.properties[key] ||
       a.properties.name.localeCompare(b.properties.name,'es'));
   }
+  // Lecturas sustantivas y comparativas de los resultados del índice piloto.
+  // El valor mayor significa un resultado más favorable dentro de la escala;
+  // no equivale a acreditar estándares absolutos de bienestar.
+  const interpretiveLimits={
+    D1:'Esto no acredita, por sí solo, que todas las instalaciones o necesidades individuales de salud y protección tengan condiciones adecuadas.',
+    D2:'Esta puntuación no equivale a una evaluación clínica de la salud mental del personal ni a una comprobación de atención efectiva.',
+    D3:'El resultado no demuestra que las necesidades de vivienda y alojamiento del personal estén plenamente cubiertas.',
+    D4:'La puntuación no certifica la calidad de toda la capacitación ni la transparencia efectiva de cada proceso de ascenso.',
+    D5:'El resultado no supone cobertura plena de los componentes cognitivo, espiritual y ético; la espiritualidad tiene medición directa limitada en este piloto.'
+  };
   function interpretationFor(p,key) {
-    const place=rankFor(key,p);
+    const rank=rankFor(key,p);
     if(key==='IBP'){
       const profile=Object.entries(dimensionTopics).map(([code,info])=>({
         name:info.name, value:p[code]
       }));
       const sorted=[...profile].sort((a,b)=>b.value-a.value);
-      return p.name+' obtiene '+fmt(p.IBP)+' puntos en el índice global y ocupa el puesto '+
-        place+' entre las 26 subzonas. Sus puntuaciones dimensionales más altas se encuentran en '+
-        sorted[0].name+' ('+fmt(sorted[0].value)+') y '+sorted[1].name+
-        ' ('+fmt(sorted[1].value)+'). En contraste, registra los valores menores en '+
-        sorted[4].name+' ('+fmt(sorted[4].value)+') y '+sorted[3].name+
-        ' ('+fmt(sorted[3].value)+'). Esta combinación permite identificar fortalezas relativas y dimensiones que requieren atención en su perfil territorial.';
+      const standing=rank===1
+        ? 'presenta el resultado global relativamente más favorable entre las 26 subzonas evaluadas'
+        : rank===26
+          ? 'registra la puntuación global más baja entre las 26 subzonas evaluadas'
+          : 'ocupa el puesto '+rank+' entre las 26 subzonas evaluadas, ordenadas de mayor a menor puntuación';
+      return 'De acuerdo con el Índice de Bienestar Policial 1.0, '+p.name+' '+standing+
+        ', con '+fmt(p.IBP)+' puntos. En su perfil, los resultados más altos corresponden a '+
+        sorted[0].name+' ('+fmt(sorted[0].value)+' puntos) y '+sorted[1].name+
+        ' ('+fmt(sorted[1].value)+' puntos), mientras que los más bajos aparecen en '+
+        sorted[4].name+' ('+fmt(sorted[4].value)+' puntos) y '+sorted[3].name+
+        ' ('+fmt(sorted[3].value)+' puntos).';
     }
     const dim=dimensionTopics[key];
     const internal=Object.keys(dimensionTopics).sort((a,b)=>p[b]-p[a]);
     const internalRank=internal.indexOf(key)+1;
-    const relation=internalRank===1?'es la dimensión con puntuación más alta de la subzona':
-      internalRank===5?'es la dimensión con puntuación más baja de la subzona':
-      'ocupa el puesto '+internalRank+' entre sus cinco dimensiones';
-    const diff=p[key]-meanByMetric[key];
-    const againstMean=Math.abs(diff)<0.005?'coincide con la media de referencia':
-      'se encuentra '+fmt(Math.abs(diff))+' puntos '+(diff>0?'por encima':'por debajo')+' de la media de referencia';
-    return p.name+' registra '+fmt(p[key])+' puntos en '+dim.name+
-      ' y ocupa el puesto '+place+' de 26 subzonas en esta dimensión. El resultado '+againstMean+
-      '. Dentro de su perfil, '+relation+'. La puntuación reúne indicadores de '+dim.items+'.';
+    const relation=internalRank===1
+      ? 'esta es la dimensión con el resultado más alto dentro de su propio perfil'
+      : internalRank===5
+        ? 'esta es la dimensión con el resultado más bajo dentro de su propio perfil'
+        : 'esta dimensión ocupa el puesto '+internalRank+' entre las cinco dimensiones de su perfil';
+    const standing=rank===1
+      ? 'el resultado relativamente más favorable entre las 26 subzonas'
+      : rank===26
+        ? 'el resultado más bajo entre las 26 subzonas'
+        : 'el puesto '+rank+' entre las 26 subzonas';
+    return 'En '+dim.name+', '+p.name+' obtiene '+fmt(p[key])+
+      ' puntos y registra '+standing+' según los indicadores del IBP 1.0. La puntuación reúne información sobre '+
+      dim.items+'. En comparación con sus otras dimensiones, '+relation+'.';
   }
   function comparisonFor(p,key) {
-    const diff=p[key]-meanByMetric[key],distance=fmt(Math.abs(diff));
-    const national=fmt(meanByMetric[key]);
-    if(Math.abs(diff)<.005) return 'El resultado coincide con la media de referencia de las 26 subzonas, situada en '+national+' puntos.';
-    return key==='IBP'
-      ? 'Comparación: '+p.name+' se encuentra '+distance+' puntos '+(diff>0?'por encima':'por debajo')+
-        ' de la media nacional de referencia ('+national+' puntos).'
-      : 'Media nacional de referencia de esta dimensión: '+national+' puntos.';
+    const diff=p[key]-meanByMetric[key];
+    const mean=fmt(meanByMetric[key]);
+    const comparison=Math.abs(diff)<.005
+      ? 'coincide, al redondear, con esa media'
+      : 'se sitúa '+fmt(Math.abs(diff))+' puntos '+(diff>0?'por encima':'por debajo')+' de esa media';
+    if(key==='IBP'){
+      return 'La media de referencia de las 26 subzonas es de '+mean+' puntos; '+p.name+' '+comparison+
+        '. Este resultado permite describir su posición relativa dentro de los territorios evaluados, pero no afirmar que su bienestar sea óptimo o satisfactorio en términos absolutos: el índice piloto no cuenta todavía con umbrales de suficiencia validados.';
+    }
+    return 'La media de referencia de esta dimensión es de '+mean+' puntos; '+p.name+' '+comparison+
+      '. '+interpretiveLimits[key];
   }
   // Una sola escala cromática para el mapa y las barras de cada dimensión.
   const colors = ['#e7f0f8','#cbdfef','#a5c8e2','#75a9cd','#4384b3','#1c527d'];
