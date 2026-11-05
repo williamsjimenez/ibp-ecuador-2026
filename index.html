@@ -41,13 +41,19 @@
           <div id="map" role="application" aria-label="Mapa interactivo de los resultados por subzona"></div>
           <div class="map-top-actions" aria-label="Extensión del mapa"><button id="view-mainland">Continente</button><button id="view-islands">Galápagos</button><button id="view-all">Todo Ecuador</button></div>
           <div class="map-caption"><div class="legend-name" id="legend-title">Índice global de bienestar policial</div><div class="legend-ramp" id="legend-ramp" aria-hidden="true"></div><div class="legend-values"><span id="legend-min">41,18</span><span id="legend-note">Colores relativos al rango observado</span><span id="legend-max">58,10</span></div><div class="map-benchmark" id="map-benchmark" aria-live="polite"></div></div>
+          <section class="metric-reading" aria-label="Interpretación del resultado" aria-live="polite">
+            <h3>Interpretación del resultado · <span id="reading-territory">Cañar</span></h3>
+            <p id="metric-meaning"></p>
+            <p id="metric-comparison" class="metric-comparison"></p>
+            <p id="proxy-note" class="proxy-note"></p>
+          </section>
         </div>
         <aside class="inspector" aria-label="Ficha territorial">
           <div class="inspector-top"><span class="section-tag">FICHA TERRITORIAL</span><h3 id="selected-name">Cañar</h3><div class="selected-zone" id="selected-zone">Zona 6</div></div>
           <div class="focus"><div><span id="focus-label">Índice global</span><strong id="focus-score">58,10</strong></div><span>de 100 puntos</span></div>
-          <section class="metric-reading" aria-label="Interpretación del resultado"><h4>¿Qué significa esta puntuación?</h4><p id="metric-meaning"></p><p id="metric-comparison" class="metric-comparison" aria-live="polite"></p></section>
-          <h4>Perfil de puntuaciones y comparación nacional</h4><div class="profile-intro">Cada dimensión se mide entre 0 y 100. Un valor mayor indica una situación más favorable según los indicadores del piloto, no un porcentaje de policías con bienestar.</div><div id="profile" class="profile"></div>
-          <div id="proxy-note" class="proxy-note"></div>
+          <h4>Perfil de puntuaciones</h4>
+          <div class="profile-columns" aria-label="Puntuación de la subzona y media nacional"><span></span><span>Subzona</span><span>Media</span></div>
+          <div id="profile" class="profile"></div>
           <div class="subzone-browser"><div class="subzone-browser-header"><h4>Explorar subzonas</h4><span id="list-count">26 territorios</span></div><input id="subzone-search" type="search" placeholder="Buscar subzona…" aria-label="Buscar subzona"><div id="subzone-list" class="subzone-list"></div></div>
         </aside>
       </div>
