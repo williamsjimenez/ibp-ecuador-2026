@@ -18,7 +18,7 @@
     D2:{name:'bienestar psicológico, mental y emocional',items:'seguimiento psicológico registrado, carga emocional, confianza y acceso a servicios de apoyo'},
     D3:{name:'bienestar socioeconómico y habitabilidad',items:'alojamiento, habitabilidad, ingresos y condiciones de vivienda'},
     D4:{name:'desarrollo profesional y carrera',items:'recursos de capacitación, pertinencia de la formación y percepción de ascensos'},
-    D5:{name:'bienestar cognitivo y ética institucional',items:'formación doctrinal, misión institucional, toma de decisiones y dilemas éticos'}
+    D5:{name:'bienestar cognitivo, espiritual y ético institucional',items:'formación doctrinal, misión institucional, toma de decisiones y dilemas éticos'}
   };
   // En cada ranking se conserva el puesto nacional, también al filtrar por zona.
   function rankFor(key, p) {
