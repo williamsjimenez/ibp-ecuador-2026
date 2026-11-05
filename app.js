@@ -82,7 +82,7 @@
       : 'se sitúa '+fmt(Math.abs(diff))+' puntos '+(diff>0?'por encima':'por debajo')+' de esa media';
     if(key==='IBP'){
       return 'La media de referencia de las 26 subzonas es de '+mean+' puntos; '+p.name+' '+comparison+
-        '. Este resultado permite describir su posición relativa dentro de los territorios evaluados, pero no afirmar que su bienestar sea óptimo o satisfactorio en términos absolutos: el índice piloto no cuenta todavía con umbrales de suficiencia validados.';
+        '. En el conjunto de las 26 subzonas evaluadas, esta diferencia permite reconocer su posición relativa en el índice.';
     }
     return 'La media de referencia de esta dimensión es de '+mean+' puntos; '+p.name+' '+comparison+
       '. '+interpretiveLimits[key];
