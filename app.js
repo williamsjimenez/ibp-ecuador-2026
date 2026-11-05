@@ -20,36 +20,52 @@
     D4:{name:'desarrollo profesional y carrera',items:'recursos de capacitación, pertinencia de la formación y percepción de ascensos'},
     D5:{name:'bienestar cognitivo y ética institucional',items:'formación doctrinal, misión institucional, toma de decisiones y dilemas éticos'}
   };
+  // En cada ranking se conserva el puesto nacional, también al filtrar por zona.
+  function rankFor(key, p) {
+    return 1 + all.filter(f => f.properties[key] > p[key]).length;
+  }
+  function sortedFor(key) {
+    return [...all].sort((a,b) => b.properties[key]-a.properties[key] ||
+      a.properties.name.localeCompare(b.properties.name,'es'));
+  }
   function interpretationFor(p,key) {
-    if (key === 'IBP') {
-      const dimensions = Object.entries(dimensionTopics).map(([code,info])=>({
-        code,name:info.name,score:p[code]
+    const place=rankFor(key,p);
+    if(key==='IBP'){
+      const profile=Object.entries(dimensionTopics).map(([code,info])=>({
+        name:info.name, value:p[code]
       }));
-      const top=[...dimensions].sort((a,b)=>b.score-a.score).slice(0,2);
-      const bottom=[...dimensions].sort((a,b)=>a.score-b.score).slice(0,2);
-      return 'Los '+fmt(p.IBP)+' puntos del índice global de '+p.name+
-        ' combinan sus valores más altos en '+top[0].name+' ('+fmt(top[0].score)+
-        ' puntos) y '+top[1].name+' ('+fmt(top[1].score)+
-        ' puntos), con puntuaciones menores en '+bottom[0].name+' ('+fmt(bottom[0].score)+
-        ' puntos) y '+bottom[1].name+' ('+fmt(bottom[1].score)+
-        ' puntos). Este contraste entre dimensiones permite comprender el resultado agregado de la subzona.';
+      const sorted=[...profile].sort((a,b)=>b.value-a.value);
+      return p.name+' obtiene '+fmt(p.IBP)+' puntos en el índice global y ocupa el puesto '+
+        place+' entre las 26 subzonas. Sus puntuaciones dimensionales más altas se encuentran en '+
+        sorted[0].name+' ('+fmt(sorted[0].value)+') y '+sorted[1].name+
+        ' ('+fmt(sorted[1].value)+'). En contraste, registra los valores menores en '+
+        sorted[4].name+' ('+fmt(sorted[4].value)+') y '+sorted[3].name+
+        ' ('+fmt(sorted[3].value)+'). Esta combinación permite identificar fortalezas relativas y dimensiones que requieren atención en su perfil territorial.';
     }
-    const info=dimensionTopics[key];
-    const dimensions=Object.keys(dimensionTopics).sort((a,b)=>p[b]-p[a]);
-    const position=dimensions.indexOf(key)+1;
-    const place=position===1?'la puntuación más alta':position===5?'la puntuación más baja':'la '+['','segunda','tercera','cuarta'][position-1]+' puntuación más alta';
-    return 'En '+p.name+', los '+fmt(p[key])+' puntos de '+info.name+
-      ' sintetizan los resultados sobre '+info.items+
-      '. Dentro del perfil de esta subzona, es '+place+' entre sus cinco dimensiones.';
+    const dim=dimensionTopics[key];
+    const internal=Object.keys(dimensionTopics).sort((a,b)=>p[b]-p[a]);
+    const internalRank=internal.indexOf(key)+1;
+    const relation=internalRank===1?'es la dimensión con puntuación más alta de la subzona':
+      internalRank===5?'es la dimensión con puntuación más baja de la subzona':
+      'ocupa el puesto '+internalRank+' entre sus cinco dimensiones';
+    const diff=p[key]-meanByMetric[key];
+    const againstMean=Math.abs(diff)<0.005?'coincide con la media de referencia':
+      'se encuentra '+fmt(Math.abs(diff))+' puntos '+(diff>0?'por encima':'por debajo')+' de la media de referencia';
+    return p.name+' registra '+fmt(p[key])+' puntos en '+dim.name+
+      ' y ocupa el puesto '+place+' de 26 subzonas en esta dimensión. El resultado '+againstMean+
+      '. Dentro de su perfil, '+relation+'. La puntuación reúne indicadores de '+dim.items+'.';
   }
   function comparisonFor(p,key) {
     const diff=p[key]-meanByMetric[key],distance=fmt(Math.abs(diff));
     const national=fmt(meanByMetric[key]);
     if(Math.abs(diff)<.005) return 'El resultado coincide con la media de referencia de las 26 subzonas, situada en '+national+' puntos.';
-    return 'Frente a la media de referencia de las 26 subzonas ('+national+
-      ' puntos), '+p.name+' se sitúa '+distance+' puntos '+(diff>0?'por encima':'por debajo')+'.';
+    return key==='IBP'
+      ? 'Comparación: '+p.name+' se encuentra '+distance+' puntos '+(diff>0?'por encima':'por debajo')+
+        ' de la media nacional de referencia ('+national+' puntos).'
+      : 'Media nacional de referencia de esta dimensión: '+national+' puntos.';
   }
-  const colors = ['#f2ebe7','#e4d0c7','#d2ac9c','#b98472','#965c53','#69383d'];
+  // Una sola escala cromática para el mapa y las barras de cada dimensión.
+  const colors = ['#e7f0f8','#cbdfef','#a5c8e2','#75a9cd','#4384b3','#1c527d'];
   let metric='IBP', scale='observed', selected='Cañar', zone='all';
   let outlines=null;
   const byName=new Map(all.map(f=>[f.properties.name,f]));
@@ -65,7 +81,7 @@
     const difference=delta(score,key);
     return Math.abs(difference)<0.005?'coincide con la media de referencia':('se sitúa '+fmt(Math.abs(difference))+' puntos '+(difference>0?'por encima':'por debajo')+' de la media de referencia');
   };
-  const tooltipHtml=(p)=>'<b>'+p.name+'</b><span>'+lookup[metric].long+': '+fmt(p[metric])+' / 100</span><span>Media nacional de referencia: '+fmt(meanByMetric[metric])+'</span><span>'+position(p[metric],metric)+'.</span>';
+  const tooltipHtml=(p)=>'<b>'+rankFor(metric,p)+'. '+p.name+'</b><span>'+lookup[metric].long+': '+fmt(p[metric])+' / 100</span><span>Media de 26 subzonas: '+fmt(meanByMetric[metric])+'</span><span>'+position(p[metric],metric)+'.</span>';
   const bounds = {
     mainland:L.latLngBounds([[-5.08,-81.16],[1.53,-75.12]]),
     islands:L.latLngBounds([[-1.48,-92.1],[1.78,-89.17]]),
@@ -76,16 +92,23 @@
   map.fitBounds(bounds.mainland,{padding:[20,20]});
   let geoLayer, zoneLayer;
   function getMinMax(){const v=all.map(f=>f.properties[metric]);return scale==='fixed' ? [0,100] : [Math.min(...v),Math.max(...v)];}
-  function getColor(x){const [lo,hi]=getMinMax();const t=Math.max(0,Math.min(.999999,(x-lo)/(hi-lo||1)));return colors[Math.floor(t*colors.length)];}
+  function colorForMetric(x,key) {
+    const values=all.map(f=>f.properties[key]);
+    const lo=scale==='fixed'?0:Math.min(...values);
+    const hi=scale==='fixed'?100:Math.max(...values);
+    const t=Math.max(0,Math.min(.999999,(x-lo)/(hi-lo||1)));
+    return colors[Math.floor(t*colors.length)];
+  }
+  function getColor(x){return colorForMetric(x,metric);}
   function zoneMatch(p){return zone==='all'||String(p.zone)===zone;}
   function getStyle(f){const p=f.properties;const isSelected=p.name===selected;const visible=zoneMatch(p);
-    return {color:isSelected?'#4c2830':'#ffffff',weight:isSelected?2.8:1.25,opacity:visible?1:.3,fillColor:visible?getColor(p[metric]):'#faf7f4',fillOpacity:visible?.95:.25};}
+    return {color:isSelected?'#143958':'#ffffff',weight:isSelected?2.8:1.25,opacity:visible?1:.3,fillColor:visible?getColor(p[metric]):'#f8fbfe',fillOpacity:visible?.95:.25};}
   function eachFeature(f,layer){const p=f.properties;
     layer.bindTooltip(tooltipHtml(p),{sticky:true,direction:'top',className:'ibp-tooltip'});
-    layer.on({mouseover(e){e.target.setStyle({weight:2.2,color:'#713f3b'});e.target.bringToFront();},mouseout(e){geoLayer.resetStyle(e.target);},click(){selectSubzone(p.name,true);}});
+    layer.on({mouseover(e){e.target.setStyle({weight:2.2,color:'#285a84'});e.target.bringToFront();},mouseout(e){geoLayer.resetStyle(e.target);},click(){selectSubzone(p.name,true);}});
   }
   geoLayer=L.geoJSON(data,{style:getStyle,onEachFeature:eachFeature}).addTo(map);
-  zoneLayer=L.geoJSON(window.IBP_ZONES_GEOJSON,{interactive:false,style:{color:'#57483e',weight:2.1,opacity:.65,fill:false,dashArray:'6,4'}});
+  zoneLayer=L.geoJSON(window.IBP_ZONES_GEOJSON,{interactive:false,style:{color:'#33516d',weight:2.1,opacity:.65,fill:false,dashArray:'6,4'}});
   function updateMap(){geoLayer.setStyle(getStyle);geoLayer.eachLayer(l=>l.setTooltipContent(tooltipHtml(l.feature.properties)));}
   function paintLegend(){
     const ramp=document.querySelector('#legend-ramp');ramp.replaceChildren();
@@ -112,6 +135,7 @@
     document.querySelector('#focus-score').textContent=fmt(p[metric]);
     document.querySelector('#focus-mean').textContent=fmt(meanByMetric[metric]);
     document.querySelector('#focus-diff').textContent=signed(delta(p[metric],metric));
+    document.querySelector('#focus-rank').textContent=rankFor(metric,p)+' / 26';
     document.querySelector('#reading-territory').textContent=p.name;
     document.querySelector('#metric-meaning').textContent=interpretationFor(p,metric);
     document.querySelector('#metric-comparison').textContent=comparisonFor(p,metric);
@@ -147,6 +171,7 @@
       const fill=document.createElement('div');
       fill.className='profile-fill';
       fill.style.width=p[key]+'%';
+      fill.style.backgroundColor=colorForMetric(p[key],key);
       const meanMark=document.createElement('div');
       meanMark.className='profile-mean-mark';
       meanMark.style.left=meanByMetric[key]+'%';
@@ -157,17 +182,30 @@
     });
   }
   function drawList(){
-    const query=document.querySelector('#subzone-search').value.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().trim();
-    const filtered=all.filter(f=>{const name=f.properties.name.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();return zoneMatch(f.properties)&&name.includes(query);});
-    document.querySelector('#list-count').textContent=filtered.length+' territorios';
+    const input=document.querySelector('#subzone-search');
+    const normalize=s=>s.normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();
+    const query=normalize(input.value.trim());
+    const ordered=sortedFor(metric);
+    const filtered=ordered.filter(f=>zoneMatch(f.properties)&&normalize(f.properties.name).includes(query));
+    document.querySelector('#ranking-title').textContent='Ranking nacional · '+lookup[metric].label;
+    document.querySelector('#list-count').textContent=filtered.length+' de 26';
     const node=document.querySelector('#subzone-list');node.replaceChildren();
     filtered.forEach(f=>{
       const p=f.properties;
-      const btn=document.createElement('button');btn.className='subzone-item'+(p.name===selected?' active':'');
-      const a=document.createElement('span'),b=document.createElement('span'),score=document.createElement('strong'),difference=document.createElement('small');
-      a.textContent=p.name;score.textContent=fmt(p[metric]);difference.textContent=signed(delta(p[metric],metric))+' vs. media';
-      b.className='subzone-values';b.append(score,difference);
-      btn.append(a,b);btn.title=lookup[metric].long+': '+fmt(p[metric])+' puntos; media nacional de referencia: '+fmt(meanByMetric[metric]);
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.className='subzone-item'+(p.name===selected?' active':'');
+      const rank=document.createElement('span');
+      rank.className='rank-index';rank.textContent=rankFor(metric,p)+'.';
+      const name=document.createElement('span');
+      name.className='rank-name';name.textContent=p.name;
+      const values=document.createElement('span');
+      values.className='subzone-values';
+      const score=document.createElement('strong');score.textContent=fmt(p[metric]);
+      const difference=document.createElement('small');difference.textContent=signed(delta(p[metric],metric))+' vs. media';
+      values.append(score,difference);
+      btn.append(rank,name,values);
+      btn.title='Puesto '+rankFor(metric,p)+' de 26; '+lookup[metric].long+': '+fmt(p[metric])+' puntos';
       btn.addEventListener('click',()=>selectSubzone(p.name,true));
       node.appendChild(btn);
     });
@@ -177,14 +215,14 @@
   const nav=document.querySelector('#metrics');metrics.forEach(([key,label])=>{const b=document.createElement('button');b.className='metric-btn'+(key==='IBP'?' active':'');b.type='button';b.textContent=label;b.dataset.metric=key;b.setAttribute('aria-pressed',String(key==='IBP'));b.addEventListener('click',()=>setMetric(key));nav.appendChild(b);});
   const zsel=document.querySelector('#zone-filter');for(let z=1;z<=9;z++){const o=document.createElement('option');o.value=String(z);o.textContent='Zona '+z;zsel.appendChild(o)}
   zsel.addEventListener('change',e=>{zone=e.target.value;updateMap();drawList();if(zone!=='all'){const zoneFeatures=all.filter(f=>zoneMatch(f.properties));const group=L.geoJSON({type:'FeatureCollection',features:zoneFeatures});map.fitBounds(group.getBounds(),{padding:[25,25],maxZoom:9});}else map.fitBounds(bounds.mainland,{padding:[20,20]});});
-  document.querySelector('#scale-filter').addEventListener('change',e=>{scale=e.target.value;paintLegend();updateMap();});
+  document.querySelector('#scale-filter').addEventListener('change',e=>{scale=e.target.value;paintLegend();updateMap();drawProfile();});
   document.querySelector('#show-zones').addEventListener('change',e=>{e.target.checked?zoneLayer.addTo(map):map.removeLayer(zoneLayer);});
   document.querySelector('#subzone-search').addEventListener('input',drawList);
   document.querySelector('#view-mainland').addEventListener('click',()=>map.fitBounds(bounds.mainland,{padding:[20,20]}));
   document.querySelector('#view-islands').addEventListener('click',()=>map.fitBounds(bounds.islands,{padding:[20,20]}));
   document.querySelector('#view-all').addEventListener('click',()=>map.fitBounds(bounds.all,{padding:[20,20]}));
   document.querySelector('#kpi-mean').textContent=fmt(avg(all.map(f=>f.properties.IBP)));
-  // Use the reported full-precision median; rounded territorial values yield 47.295.
+  // Mediana publicada con precisión original; los datos del CSV están redondeados a dos decimales.
   document.querySelector('#kpi-median').textContent='47,29';
   paintLegend();drawProfile();drawList();
 })();
