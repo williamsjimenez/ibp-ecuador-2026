@@ -7,10 +7,10 @@
   const metrics = [
     ['IBP','Índice global','Índice global de bienestar policial'],
     ['D1','D1 · Física y salud','Bienestar físico y salud'],
-    ['D2','D2 · Psicológica','Bienestar psicológico, mental y emocional'],
+    ['D2','D2 · Psicológica y emocional','Bienestar psicológico, mental y emocional'],
     ['D3','D3 · Socioeconómica','Bienestar socioeconómico y habitabilidad'],
-    ['D4','D4 · Carrera','Desarrollo profesional y carrera'],
-    ['D5','D5 · Cognitiva y ética','Bienestar cognitivo, espiritual y ético institucional']
+    ['D4','D4 · Carrera profesional','Desarrollo profesional y carrera'],
+    ['D5','D5 · Cognitiva, espiritual y ética','Bienestar cognitivo, espiritual y ético institucional']
   ];
   const lookup = Object.fromEntries(metrics.map(m=>[m[0], {label:m[1],long:m[2]}]));
   const dimensionTopics = {
@@ -49,7 +49,7 @@
     return 'Frente a la media de referencia de las 26 subzonas ('+national+
       ' puntos), '+p.name+' se sitúa '+distance+' puntos '+(diff>0?'por encima':'por debajo')+'.';
   }
-  const colors = ['#e9f2f8','#c6ddea','#99bfd7','#639ac1','#3376a5','#104f80'];
+  const colors = ['#f2ebe7','#e4d0c7','#d2ac9c','#b98472','#965c53','#69383d'];
   let metric='IBP', scale='observed', selected='Cañar', zone='all';
   let outlines=null;
   const byName=new Map(all.map(f=>[f.properties.name,f]));
@@ -79,13 +79,13 @@
   function getColor(x){const [lo,hi]=getMinMax();const t=Math.max(0,Math.min(.999999,(x-lo)/(hi-lo||1)));return colors[Math.floor(t*colors.length)];}
   function zoneMatch(p){return zone==='all'||String(p.zone)===zone;}
   function getStyle(f){const p=f.properties;const isSelected=p.name===selected;const visible=zoneMatch(p);
-    return {color:isSelected?'#102f4b':'#ffffff',weight:isSelected?2.8:1.25,opacity:visible?1:.3,fillColor:visible?getColor(p[metric]):'#f9fbfd',fillOpacity:visible?.95:.25};}
+    return {color:isSelected?'#4c2830':'#ffffff',weight:isSelected?2.8:1.25,opacity:visible?1:.3,fillColor:visible?getColor(p[metric]):'#faf7f4',fillOpacity:visible?.95:.25};}
   function eachFeature(f,layer){const p=f.properties;
     layer.bindTooltip(tooltipHtml(p),{sticky:true,direction:'top',className:'ibp-tooltip'});
-    layer.on({mouseover(e){e.target.setStyle({weight:2.2,color:'#204b71'});e.target.bringToFront();},mouseout(e){geoLayer.resetStyle(e.target);},click(){selectSubzone(p.name,true);}});
+    layer.on({mouseover(e){e.target.setStyle({weight:2.2,color:'#713f3b'});e.target.bringToFront();},mouseout(e){geoLayer.resetStyle(e.target);},click(){selectSubzone(p.name,true);}});
   }
   geoLayer=L.geoJSON(data,{style:getStyle,onEachFeature:eachFeature}).addTo(map);
-  zoneLayer=L.geoJSON(window.IBP_ZONES_GEOJSON,{interactive:false,style:{color:'#122f4d',weight:2.1,opacity:.65,fill:false,dashArray:'6,4'}});
+  zoneLayer=L.geoJSON(window.IBP_ZONES_GEOJSON,{interactive:false,style:{color:'#57483e',weight:2.1,opacity:.65,fill:false,dashArray:'6,4'}});
   function updateMap(){geoLayer.setStyle(getStyle);geoLayer.eachLayer(l=>l.setTooltipContent(tooltipHtml(l.feature.properties)));}
   function paintLegend(){
     const ramp=document.querySelector('#legend-ramp');ramp.replaceChildren();
@@ -110,28 +110,49 @@
     document.querySelector('#selected-zone').textContent='Zona policial '+p.zone;
     document.querySelector('#focus-label').textContent=lookup[metric].long;
     document.querySelector('#focus-score').textContent=fmt(p[metric]);
+    document.querySelector('#focus-mean').textContent=fmt(meanByMetric[metric]);
+    document.querySelector('#focus-diff').textContent=signed(delta(p[metric],metric));
     document.querySelector('#reading-territory').textContent=p.name;
     document.querySelector('#metric-meaning').textContent=interpretationFor(p,metric);
     document.querySelector('#metric-comparison').textContent=comparisonFor(p,metric);
     document.querySelector('#proxy-note').textContent=proxyNote(p.name);
     const list=document.querySelector('#profile');list.replaceChildren();
     metrics.forEach(([key,label])=>{
-      const row=document.createElement('div');row.className='profile-row'+(key===metric?' selected':'');
-      const head=document.createElement('div');head.className='profile-head';
-      const title=document.createElement('span');title.className='profile-label';title.textContent=label;
-      const values=document.createElement('div');values.className='profile-values';
-      const score=document.createElement('strong');score.textContent=fmt(p[key]);
-      const mean=document.createElement('span');mean.textContent=fmt(meanByMetric[key]);
-      values.append(score,mean);
-      head.append(title,values);
-      const track=document.createElement('div');track.className='profile-track';
-      const fill=document.createElement('div');fill.className='profile-fill';
+      const row=document.createElement('div');
+      row.className='profile-row'+(key===metric?' selected':'');
+      const title=document.createElement('div');
+      title.className='profile-label';
+      title.textContent=label;
+      const values=document.createElement('div');
+      values.className='profile-values';
+      const number=(value,caption,kind)=>{
+        const cell=document.createElement('div');
+        cell.className='profile-stat '+kind;
+        const strong=document.createElement('strong');
+        strong.textContent=value;
+        const small=document.createElement('small');
+        small.textContent=caption;
+        cell.append(strong,small);
+        return cell;
+      };
+      values.append(
+        number(fmt(p[key]),'Subzona','stat-local'),
+        number(fmt(meanByMetric[key]),'Media','stat-mean'),
+        number(signed(delta(p[key],key)),'Diferencia','stat-delta')
+      );
+      const track=document.createElement('div');
+      track.className='profile-track';
+      track.setAttribute('role','img');
+      track.setAttribute('aria-label',label+': '+fmt(p[key])+' puntos; media de 26 subzonas: '+fmt(meanByMetric[key])+'; diferencia: '+signed(delta(p[key],key))+' puntos');
+      const fill=document.createElement('div');
+      fill.className='profile-fill';
       fill.style.width=p[key]+'%';
-      const meanMark=document.createElement('div');meanMark.className='profile-mean-mark';
+      const meanMark=document.createElement('div');
+      meanMark.className='profile-mean-mark';
       meanMark.style.left=meanByMetric[key]+'%';
       meanMark.title='Media: '+fmt(meanByMetric[key]);
       track.append(fill,meanMark);
-      row.append(head,track);
+      row.append(title,values,track);
       list.appendChild(row);
     });
   }
