@@ -149,7 +149,7 @@
     document.querySelector('#map-benchmark').textContent='Media nacional de referencia de '+lookup[metric].long.toLowerCase()+': '+fmt(meanByMetric[metric])+' puntos, promedio simple de 26 subzonas.';
   }
   const proxyNote=name=>{
-    const items=['Parte de los indicadores utiliza proxies zonales; la puntuación no equivale a una observación individual.'];
+    const items=[];
     if(['DMG','Guayas'].includes(name))items.push('Los indicadores de encuesta comparten los mismos valores provinciales en Guayas y DMG.');
     if(['DMQ','Pichincha'].includes(name))items.push('Los indicadores de encuesta comparten los mismos valores provinciales en Pichincha y DMQ.');
     if(['Pichincha','Galápagos'].includes(name))items.push('Tres indicadores de recursos PCIC utilizan aproximaciones zonales.');
