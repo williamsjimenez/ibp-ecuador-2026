@@ -38,18 +38,19 @@
       <article class="kpi"><span>Dimensiones analizadas</span><strong>05</strong><small>30 indicadores en el modelo</small></article>
     </section>
     <section class="workspace" aria-label="Atlas interactivo">
-      <div class="workspace-header"><div><h2>Resultados por subzona</h2><p>Selecciona una dimensión y haz clic sobre cualquier territorio.</p></div><a class="download" href="./datos/resultados_26_subzonas.csv" download>↓ Descargar datos CSV</a></div>
+      <div class="workspace-header"><div><h2>Resultados por subzona</h2><p>Selecciona una dimensión, haz clic en un territorio o activa la capa de riesgos. Las clases R4–R1 siempre se calculan desde el índice global IBP 1.0.</p></div><a class="download" href="./datos/resultados_26_subzonas.csv" download>↓ Descargar datos CSV</a></div>
       <nav id="metrics" class="metrics" aria-label="Dimensión que se representa en el mapa"></nav>
       <div class="filters">
         <label>Zona policial <select id="zone-filter"><option value="all">Todas las zonas</option></select></label>
         <label>Color según <select id="scale-filter"><option value="observed">Rango observado</option><option value="fixed">Escala fija de 0 a 100</option></select></label>
         <label class="toggle"><input id="show-zones" type="checkbox"> <span>Mostrar límites zonales</span></label>
+        <label class="toggle risk-toggle"><input id="risk-layer" type="checkbox"> <span>Colorear mapa según riesgo R4–R1</span></label>
       </div>
       <div class="map-layout">
         <div class="map-panel">
           <div id="map" role="application" aria-label="Mapa interactivo de los resultados por subzona"></div>
           <div class="map-top-actions" aria-label="Extensión del mapa"><button id="view-mainland">Continente</button><button id="view-islands">Galápagos</button><button id="view-all">Todo Ecuador</button></div>
-          <div class="map-caption"><div class="legend-name" id="legend-title">Índice global de bienestar policial</div><div class="legend-ramp" id="legend-ramp" aria-hidden="true"></div><div class="legend-values"><span id="legend-min">41,18</span><span id="legend-note">Colores relativos al rango observado</span><span id="legend-max">58,10</span></div><div class="map-benchmark" id="map-benchmark" aria-live="polite"></div></div>
+          <div class="map-caption"><div class="legend-name" id="legend-title">Índice global de bienestar policial</div><div class="legend-ramp" id="legend-ramp" aria-hidden="true"></div><div class="legend-values"><span id="legend-min">41,18</span><span id="legend-note">Colores relativos al rango observado</span><span id="legend-max">58,10</span></div><div class="map-benchmark" id="map-benchmark" aria-live="polite"></div><div class="risk-inline map-risk-help"><span class="risk-pill risk-r4">R4</span><span class="risk-pill risk-r3">R3</span><span class="risk-pill risk-r2">R2</span><span class="risk-pill risk-r1">R1</span><span>Rangos SAT 1.0 del IBP global; activa el filtro de riesgo para colorear el mapa.</span></div></div>
           <section class="metric-reading" aria-label="Interpretación del resultado" aria-live="polite">
             <h3>Interpretación del resultado · <span id="reading-territory">Cañar</span></h3>
             <p id="metric-meaning"></p>
@@ -58,7 +59,7 @@
           </section>
         </div>
         <aside class="inspector" aria-label="Ficha territorial">
-          <div class="inspector-top"><span class="section-tag">FICHA TERRITORIAL</span><h3 id="selected-name">Cañar</h3><div class="selected-zone" id="selected-zone">Zona 6</div></div>
+          <div class="inspector-top"><span class="section-tag">FICHA TERRITORIAL</span><h3 id="selected-name">Cañar</h3><div class="selected-zone" id="selected-zone">Zona 6</div><div class="risk-inline"><span id="selected-risk" class="risk-pill">R1</span><span id="selected-risk-description">Clasificación SAT 1.0 · posición relativa del índice global</span></div></div>
           <div class="focus"><div class="focus-value"><span id="focus-label">Índice global</span><strong id="focus-score">58,10</strong><small>de 100 puntos</small></div><div class="focus-bench"><span>Media subzonal <strong id="focus-mean">47,28</strong></span><span>Diferencia <strong id="focus-diff">+10,82</strong></span><span>Puesto nacional <strong id="focus-rank">1 / 26</strong></span></div></div>
           <h4>Perfil de puntuaciones</h4>
           <p class="profile-hint">Selecciona una barra para consultar sus seis indicadores.</p>
