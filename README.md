@@ -39,3 +39,7 @@ La navegación compartida ofrece cuatro secciones que conservan versiones metodo
 Los cortes de SAT 1.0 son: R4, IBP ≤ 44,9593; R3, (44,9593; 47,2917]; R2, (47,2917; 49,5282]; R1, IBP > 49,5282. Son clases relativas, no límites legales o clínicos. La activación y declaración de alertas es un procedimiento institucional diferente de su representación cartográfica, sujeto a aprobación del mecanismo SAT-BP.
 
 La trazabilidad del SAT se fundamenta en el documento técnico de consultoría 20261113_SAT(1).docx, en particular los numerales 5.4.6.2, 5.4.6.6 y 5.4.16. El documento fuente no se incluye en el repositorio.
+
+### Conservación de mapas en los cuatro módulos
+
+La interfaz mantiene cartografía geográfica navegable para los **cuatro** módulos. En IBP 1.0 se conserva íntegro el mapa histórico, sus cinco dimensiones, la ficha territorial y el detalle de 30 indicadores, y se añade un interruptor para colorear el **mismo mapa** con las categorías R4–R1 procedentes del IBP global. En IBP 2.0 se utiliza la **misma estructura cartográfica y navegación territorial**, pero con polígonos neutrales y estados «pendiente» hasta completar los 29 indicadores; el catálogo detallado se conserva en `catalogo-ibp-2-0.html`. Las páginas SAT 1.0 y SAT 2.0 muestran igualmente sus mapas, fichas territoriales y filtros, manteniendo neutral el mapa SAT 2.0 mientras no haya puntuaciones. Ninguna versión hereda cifras de otra sin recálculo.
