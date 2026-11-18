@@ -28,9 +28,9 @@ Los datos que se publican son agregados por subzona y no incluyen registros indi
 
 La navegación compartida ofrece cuatro secciones que conservan versiones metodológicas independientes.
 
-**IBP 1.0 (index.html)** mantiene el mapa histórico de 26 subzonas, el índice global, cinco dimensiones y 30 indicadores; las puntuaciones originales no se alteran.
+**IBP 1.0 (index.html)** mantiene el mapa histórico de 26 subzonas, el índice global, cinco dimensiones y 30 indicadores; las puntuaciones originales no se alteran. Incorpora una capa opcional de riesgo relativo SAT 1.0 para colorear R4–R1 sin modificar los valores dimensionales.
 
-**IBP 2.0 (ibp-2-0.html)** presenta un catálogo técnico de 29 indicadores, sus fuentes, sentidos, relación con la versión anterior y estado de disponibilidad. No publica resultados territoriales 2.0 sin cálculo y validación.
+**IBP 2.0 (ibp-2-0.html)** conserva el mismo entorno de mapas de las 26 subzonas y la navegación dimensional del IBP 1.0, sin trasladar puntuaciones antiguas. El catálogo técnico completo de 29 indicadores, con fuentes y estado de disponibilidad, permanece en **catalogo-ibp-2-0.html**. Los resultados territoriales no se publicarán sin cálculo y validación.
 
 **SAT 1.0 (sat-1-0.html)** muestra los rangos relativos de las 26 subzonas mediante los cortes fijos de la línea de base 2026, calculados desde el IBP 1.0. Se entregan además datos/clasificacion_sat_1_0_26_subzonas.csv y datos/sat_1_0_metadatos.json para auditoría y reproducción. El grupo R4 incluye siete subzonas, R3 seis, R2 seis y R1 siete.
 
