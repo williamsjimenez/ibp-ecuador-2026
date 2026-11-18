@@ -36,9 +36,12 @@ h1{font-size:clamp(2.15rem,5vw,4rem);letter-spacing:-.05em;line-height:1.07;max-
 @media(max-width:850px){.summary{grid-template-columns:repeat(2,minmax(0,1fr))}.controls{grid-template-columns:1fr}.indicator summary{align-items:start;flex-direction:column;gap:10px}.chips{justify-content:start;min-width:0}.detail{padding-left:18px}}
 @media(max-width:480px){main,.wrap{width:calc(100% - 28px)}.summary{gap:8px}.summary article{padding:12px}.summary strong{font-size:1.8rem}.hero{padding-top:34px}}
 </style>
+<link rel="stylesheet" href="./portal-nav.css">
 </head>
 <body>
 <header class="top"><div class="wrap"><div class="logo">ATLAS IBP <span>· Ecuador · Versión 2.0</span></div><a class="back" href="./index.html">Ver mapa y resultados IBP 1.0</a></div></header>
+<nav class="pnav" aria-label="Módulos del observatorio"><div class="pnav-inner"><span class="pnav-label">Explorar:</span><a href="./index.html">IBP 1.0</a><a href="./ibp-2-0.html" aria-current="page">IBP 2.0</a><a href="./sat-1-0.html">SAT 1.0</a><a href="./sat-2-0.html">SAT 2.0</a></div></nav>
+
 <main>
 <section class="hero"><div class="eyebrow">ÍNDICE DE BIENESTAR POLICIAL · MODELO 2.0</div><h1>Los indicadores del bienestar policial <span>2.0</span></h1>
 <p class="intro">La actualización posterior a la validación de expertos y la mesa técnica organiza 29 indicadores en cinco dimensiones. Esta ficha interactiva permite consultar las definiciones, la relación con la versión 1.0, las fuentes y el estado de los datos previstos.</p>
