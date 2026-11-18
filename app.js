@@ -94,6 +94,12 @@
   }
   // Una sola escala cromática para el mapa y las barras de cada dimensión.
   const colors = ['#e7f0f8','#cbdfef','#a5c8e2','#75a9cd','#4384b3','#1c527d'];
+  // El SAT 1.0 clasifica solo el IBP global de la línea de base 2026.
+  const satCutoffs=[44.9593,47.2917,49.5282];
+  const riskNames={R4:'Mayor riesgo relativo · revisión inmediata propuesta',R3:'Revisión prioritaria',R2:'Revisión anual',R1:'Seguimiento ordinario'};
+  const riskColors={R4:'#a13f4e',R3:'#c38a3b',R2:'#73a9c9',R1:'#2a6489'};
+  const riskClass=score=>score<=satCutoffs[0]?'R4':score<=satCutoffs[1]?'R3':score<=satCutoffs[2]?'R2':'R1';
+  let showRisk=false;
   let metric='IBP', scale='observed', selected='Cañar', zone='all';
   let outlines=null;
   const byName=new Map(all.map(f=>[f.properties.name,f]));
@@ -109,7 +115,7 @@
     const difference=delta(score,key);
     return Math.abs(difference)<0.005?'coincide con la media de referencia':('se sitúa '+fmt(Math.abs(difference))+' puntos '+(difference>0?'por encima':'por debajo')+' de la media de referencia');
   };
-  const tooltipHtml=(p)=>'<b>'+rankFor(metric,p)+'. '+p.name+'</b><span>'+lookup[metric].long+': '+fmt(p[metric])+' / 100</span><span>Media de 26 subzonas: '+fmt(meanByMetric[metric])+'</span><span>'+position(p[metric],metric)+'.</span>';
+  const tooltipHtml=(p)=>'<b>'+rankFor(metric,p)+'. '+p.name+'</b><span>'+lookup[metric].long+': '+fmt(p[metric])+' / 100</span><span>Riesgo SAT 1.0: '+riskClass(p.IBP)+' (IBP global)</span><span>Media de 26 subzonas: '+fmt(meanByMetric[metric])+'</span><span>'+position(p[metric],metric)+'.</span>';
   const bounds = {
     mainland:L.latLngBounds([[-5.08,-81.16],[1.53,-75.12]]),
     islands:L.latLngBounds([[-1.48,-92.1],[1.78,-89.17]]),
@@ -127,10 +133,10 @@
     const t=Math.max(0,Math.min(.999999,(x-lo)/(hi-lo||1)));
     return colors[Math.floor(t*colors.length)];
   }
-  function getColor(x){return colorForMetric(x,metric);}
+  function getColor(x,p){return showRisk?riskColors[riskClass(p.IBP)]:colorForMetric(x,metric);}
   function zoneMatch(p){return zone==='all'||String(p.zone)===zone;}
   function getStyle(f){const p=f.properties;const isSelected=p.name===selected;const visible=zoneMatch(p);
-    return {color:isSelected?'#143958':'#ffffff',weight:isSelected?2.8:1.25,opacity:visible?1:.3,fillColor:visible?getColor(p[metric]):'#f8fbfe',fillOpacity:visible?.95:.25};}
+    return {color:isSelected?'#143958':'#ffffff',weight:isSelected?2.8:1.25,opacity:visible?1:.3,fillColor:visible?getColor(p[metric],p):'#f8fbfe',fillOpacity:visible?.95:.25};}
   function eachFeature(f,layer){const p=f.properties;
     layer.bindTooltip(tooltipHtml(p),{sticky:true,direction:'top',className:'ibp-tooltip'});
     layer.on({mouseover(e){e.target.setStyle({weight:2.2,color:'#285a84'});e.target.bringToFront();},mouseout(e){geoLayer.resetStyle(e.target);},click(){selectSubzone(p.name,true);}});
@@ -140,13 +146,13 @@
   function updateMap(){geoLayer.setStyle(getStyle);geoLayer.eachLayer(l=>l.setTooltipContent(tooltipHtml(l.feature.properties)));}
   function paintLegend(){
     const ramp=document.querySelector('#legend-ramp');ramp.replaceChildren();
-    colors.forEach(c=>{let s=document.createElement('span');s.style.background=c;ramp.appendChild(s);});
+    (showRisk?[riskColors.R4,riskColors.R3,riskColors.R2,riskColors.R1]:colors).forEach(c=>{let s=document.createElement('span');s.style.background=c;ramp.appendChild(s);});
     const [min,max]=getMinMax();
-    document.querySelector('#legend-min').textContent=fmt(min);
-    document.querySelector('#legend-max').textContent=fmt(max);
-    document.querySelector('#legend-title').textContent=lookup[metric].long;
-    document.querySelector('#legend-note').textContent=scale==='fixed'?'Referencia fija de 0 a 100':'Posición relativa dentro de la dimensión';
-    document.querySelector('#map-benchmark').textContent='Media nacional de referencia de '+lookup[metric].long.toLowerCase()+': '+fmt(meanByMetric[metric])+' puntos, promedio simple de 26 subzonas.';
+    document.querySelector('#legend-min').textContent=showRisk?'R4 · ≤ 44,9593':fmt(min);
+    document.querySelector('#legend-max').textContent=showRisk?'R1 · > 49,5282':fmt(max);
+    document.querySelector('#legend-title').textContent=showRisk?'Clasificación territorial de riesgo · SAT 1.0':lookup[metric].long;
+    document.querySelector('#legend-note').textContent=showRisk?'R4 · R3 · R2 · R1':(scale==='fixed'?'Referencia fija de 0 a 100':'Posición relativa dentro de la dimensión');
+    document.querySelector('#map-benchmark').textContent=showRisk?'Rangos relativos definidos sobre el índice global IBP 1.0; no equivalen a alertas institucionales formalmente emitidas.':'Media nacional de referencia de '+lookup[metric].long.toLowerCase()+': '+fmt(meanByMetric[metric])+' puntos, promedio simple de 26 subzonas.';
   }
   const proxyNote=name=>{
     const items=[];
@@ -159,6 +165,9 @@
     const p=byName.get(selected).properties;
     document.querySelector('#selected-name').textContent=p.name;
     document.querySelector('#selected-zone').textContent='Zona policial '+p.zone;
+    const riskPill=document.querySelector('#selected-risk');
+    riskPill.textContent=riskClass(p.IBP);riskPill.className='risk-pill risk-'+riskClass(p.IBP).toLowerCase();
+    document.querySelector('#selected-risk-description').textContent=riskNames[riskClass(p.IBP)]+' · clase relativa SAT 1.0';
     document.querySelector('#focus-label').textContent=lookup[metric].long;
     document.querySelector('#focus-score').textContent=fmt(p[metric]);
     document.querySelector('#focus-mean').textContent=fmt(meanByMetric[metric]);
@@ -303,6 +312,7 @@
   zsel.addEventListener('change',e=>{zone=e.target.value;updateMap();drawList();if(zone!=='all'){const zoneFeatures=all.filter(f=>zoneMatch(f.properties));const group=L.geoJSON({type:'FeatureCollection',features:zoneFeatures});map.fitBounds(group.getBounds(),{padding:[25,25],maxZoom:9});}else map.fitBounds(bounds.mainland,{padding:[20,20]});});
   document.querySelector('#scale-filter').addEventListener('change',e=>{scale=e.target.value;paintLegend();updateMap();drawProfile();});
   document.querySelector('#show-zones').addEventListener('change',e=>{e.target.checked?zoneLayer.addTo(map):map.removeLayer(zoneLayer);});
+  document.querySelector('#risk-layer').addEventListener('change',e=>{showRisk=e.target.checked;paintLegend();updateMap();drawProfile();drawList();});
   document.querySelector('#subzone-search').addEventListener('input',drawList);
   document.querySelector('#view-mainland').addEventListener('click',()=>map.fitBounds(bounds.mainland,{padding:[20,20]}));
   document.querySelector('#view-islands').addEventListener('click',()=>map.fitBounds(bounds.islands,{padding:[20,20]}));

@@ -1,0 +1,59 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff">
+<meta name="description" content="Sistema de Alertas Tempranas de Bienestar Policial 1.0. Clasificación relativa R4–R1 basada en los 26 resultados subzonales del IBP 1.0.">
+<title>SAT 1.0 | Bienestar Policial Ecuador</title>
+<link rel="stylesheet" href="./portal-nav.css"><link rel="stylesheet" href="./sat-portal.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body data-version="1" class="">
+<header class="brand"><div class="wrap"><div class="brand-title">POLICÍA NACIONAL DEL ECUADOR <span>· Atlas técnico de bienestar</span></div><small>Prototipo de consulta · versión metodológica 1.0</small></div></header>
+<nav class="pnav" aria-label="Módulos del observatorio"><div class="pnav-inner"><span class="pnav-label">Explorar:</span><a href="./index.html">IBP 1.0</a><a href="./ibp-2-0.html">IBP 2.0</a><a href="./sat-1-0.html" aria-current="page">SAT 1.0</a><a href="./sat-2-0.html">SAT 2.0</a></div></nav>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">SISTEMA DE ALERTAS TEMPRANAS DE BIENESTAR POLICIAL</div>
+<h1>SAT 1.0 <span style="color:#34769d">· Clasificación territorial 2026</span></h1>
+<p class="lead">Mapa de las 26 subzonas policiales clasificadas mediante los rangos relativos R4–R1 de la línea de base del Índice de Bienestar Policial 1.0. La puntuación global ordena prioridades de revisión, mientras que las condiciones materiales, los eventos y las decisiones de alerta requieren valoración diferenciada.</p>
+<div class="caution"><strong>Alcance de la clasificación.</strong> R4 es la categoría de menor puntuación relativa y mayor prioridad territorial de revisión. El diseño del SAT propone abrir o mantener la ruta de alerta para R4, pero esta página no acredita decisiones del Comité de Alertas Tempranas, casos individuales ni alertas efectivamente emitidas.</div>
+<div id="data-warning" hidden class="caution"></div>
+</section>
+<section class="kpis" aria-label="Resumen de la capa territorial">
+<article class="kpi"><span id="n-territories" class="value">26</span><span class="lbl">Subzonas de referencia</span></article>
+<article class="kpi"><span class="value">30</span><span class="lbl">Indicadores del índice base</span></article>
+<article class="kpi"><span class="value">07</span><span class="lbl">Subzonas en R4</span></article>
+<article class="kpi"><span class="value">05</span><span class="lbl">Dimensiones del bienestar</span></article>
+</section>
+<h2>Rangos de riesgo relativo · línea de base IBP 1.0</h2>
+<div class="range-grid" role="group" aria-label="Rangos relativos de riesgo">
+<button type="button" aria-pressed="false" data-risk="R4" class="range"><span class="range-sw r4">R4</span><span><b>Mayor riesgo relativo</b><small>IBP ≤ 44,9593 puntos</small><strong id="count-R4">7 subzonas</strong></span></button>
+<button type="button" aria-pressed="false" data-risk="R3" class="range"><span class="range-sw r3">R3</span><span><b>Revisión prioritaria</b><small>IBP > 44,9593 y ≤ 47,2917 puntos</small><strong id="count-R3">6 subzonas</strong></span></button>
+<button type="button" aria-pressed="false" data-risk="R2" class="range"><span class="range-sw r2">R2</span><span><b>Revisión anual</b><small>IBP > 47,2917 y ≤ 49,5282 puntos</small><strong id="count-R2">6 subzonas</strong></span></button>
+<button type="button" aria-pressed="false" data-risk="R1" class="range"><span class="range-sw r1">R1</span><span><b>Seguimiento ordinario</b><small>IBP > 49,5282 puntos</small><strong id="count-R1">7 subzonas</strong></span></button></div>
+<p class="lead" style="font-size:.91rem;margin-bottom:16px">Selecciona R4, R3, R2 o R1 para destacar las subzonas correspondientes. Vuelve a seleccionar el mismo rango para verlas todas.</p>
+<div class="tools">
+<label>Zona policial<select id="zone-filter"><option value="all">Todas las zonas</option></select></label>
+<label>Buscar subzona<input id="name-search" type="search" placeholder="Nombre o distrito…"></label>
+<button id="reset" type="button">Restablecer vista</button>
+<label style="display:inline-flex;align-items:center;flex-direction:row;gap:8px;padding:10px 0"><input id="show-zones" type="checkbox" style="min-width:0"> Mostrar límites zonales</label>
+</div>
+<div class="stage">
+<section class="map-shell" aria-label="Mapa del SAT 1.0"><div id="map" role="application" aria-label="Subzonas policiales del Ecuador"></div>
+<div class="map-actions"><button id="view-mainland">Continente</button><button id="view-islands">Galápagos</button><button id="view-all">Todo Ecuador</button></div>
+<div class="caption"><strong>Mapa de rangos relativos de bienestar, 2026.</strong> Fuente geométrica: shapefile de las 26 subzonas del Atlas IBP 1.0, simplificado para la web. Fuente de puntuación: IBP 1.0, línea de base 2026. Los cortes de riesgo son relativos a la distribución territorial del piloto y no constituyen umbrales clínicos, legales o de prevalencia.</div></section>
+<aside class="info-panel" aria-label="Ficha del territorio">
+<div class="info-head"><small>Ficha territorial · SAT 1.0</small><h3 id="selected-name">Esmeraldas</h3><div id="selected-zone" class="info-copy">Zona policial</div></div>
+<div class="info-body">
+<div class="record-head"><span id="risk-badge" class="record-class">—</span><span class="record-score"><span id="selected-score">—</span><small id="score-label">Índice global IBP 1.0</small></span></div>
+<p id="risk-desc" class="info-copy"></p><p id="risk-note" class="info-copy"></p>
+<h3 style="font-size:.98rem;margin:18px 0 3px">Perfil por dimensión</h3><div id="dimensions"></div>
+</div>
+<div class="list-title"><span>Orden de revisión R4 → R1</span><span id="shown-count">26 de 26</span></div>
+<div id="risk-list" class="risk-list"></div>
+</aside></div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:20px"><a class="link-cta" href="./datos/clasificacion_sat_1_0_26_subzonas.csv" download>Descargar clasificación R4–R1 (CSV)</a><a class="link-cta" href="./datos/sat_1_0_metadatos.json" download>Descargar metadatos</a></div>
+<section class="method" aria-label="Interpretación y reglas del sistema"><h2>Cómo interpretar SAT 1.0</h2>
+<p><b>R4:</b> hasta 44,9593 puntos, siete subzonas, prioridad máxima y ruta obligatoria propuesta de alerta territorial. <b>R3:</b> más de 44,9593 y hasta 47,2917, seis subzonas, revisión temática. <b>R2:</b> más de 47,2917 y hasta 49,5282, seis subzonas, revisión anual. <b>R1:</b> más de 49,5282, siete subzonas, seguimiento ordinario.</p><p>El diseño del SAT contempla también señales centinela, inspecciones, incumplimientos materiales y riesgos graves que pueden exigir atención en cualquier subzona, incluso en R1. Las transiciones interanuales R2→R3, R3→R4 o saltos de dos niveles hacia mayor riesgo requieren series metodológicamente comparables; la primera medición no permite observar todavía esas transiciones.</p><p>La prioridad estadística no equivale a una alerta formal emitida. La decisión institucional se documenta por los órganos competentes, mientras las actuaciones de protección inmediata no deben esperar una deliberación sobre los rangos.</p>
+<p><strong>Referencia metodológica:</strong> Diseño del Sistema de Alertas Tempranas de Bienestar Policial, numeral 5.4, apartado 5.4.6.2; índice territorial del piloto 2026. Documento técnico de consultoría, sujeto a validación institucional. Esta página solo publica datos territoriales agregados y no permite identificar situaciones individuales.</p></section>
+</main><footer class="footer"><div class="wrap">IBP y SAT · Policía Nacional del Ecuador · Atlas técnico de consulta · Línea de base 2026, clasificación relativa · Prototipo de investigación no equivalente a actos institucionales de alerta.</div></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="./sat-portal.js"></script>
+</body></html>

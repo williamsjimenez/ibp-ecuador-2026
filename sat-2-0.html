@@ -1,0 +1,58 @@
+<!doctype html><html lang="es"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#fff">
+<meta name="description" content="Sistema de Alertas Tempranas de Bienestar Policial 2.0. Especificación para IBP 2.0 pendiente de cálculo.">
+<title>SAT 2.0 | Bienestar Policial Ecuador</title>
+<link rel="stylesheet" href="./portal-nav.css"><link rel="stylesheet" href="./sat-portal.css">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+</head>
+<body data-version="2" class="v2-body">
+<header class="brand"><div class="wrap"><div class="brand-title">POLICÍA NACIONAL DEL ECUADOR <span>· Atlas técnico de bienestar</span></div><small>Prototipo de consulta · versión metodológica 2.0</small></div></header>
+<nav class="pnav" aria-label="Módulos del observatorio"><div class="pnav-inner"><span class="pnav-label">Explorar:</span><a href="./index.html">IBP 1.0</a><a href="./ibp-2-0.html">IBP 2.0</a><a href="./sat-1-0.html">SAT 1.0</a><a href="./sat-2-0.html" aria-current="page">SAT 2.0</a></div></nav>
+<main class="wrap">
+<section class="hero">
+<div class="eyebrow">SISTEMA DE ALERTAS TEMPRANAS DE BIENESTAR POLICIAL</div>
+<h1>SAT 2.0 <span style="color:#34769d">· Modelo de actualización</span></h1>
+<p class="lead">Módulo previsto para la vigilancia territorial vinculada con los 29 indicadores del Índice de Bienestar Policial 2.0. Se conserva la arquitectura de seguimiento R4–R1, pero todavía no existen resultados integrales 2.0 recalculados y comparables que permitan clasificar las subzonas.</p>
+<div class="caution"><strong>Estado de desarrollo.</strong> Las cuatro categorías se presentan como estructura metodológica, sin asignar rangos a territorios ni reutilizar valores del IBP 1.0 como si correspondieran al 2.0. Los cortes heredados solo podrían emplearse para comparaciones con equivalencia demostrada o una serie puente validada.</div>
+<div id="data-warning" hidden class="caution"></div>
+</section>
+<section class="kpis" aria-label="Resumen de la capa territorial">
+<article class="kpi"><span id="n-territories" class="value">26</span><span class="lbl">Subzonas de referencia</span></article>
+<article class="kpi"><span class="value">29</span><span class="lbl">Indicadores del índice base</span></article>
+<article class="kpi"><span class="value">—</span><span class="lbl">Subzonas R4 aún sin cálculo</span></article>
+<article class="kpi"><span class="value">05</span><span class="lbl">Dimensiones del bienestar</span></article>
+</section>
+<h2>Rangos de riesgo relativo · pendientes de calibración</h2>
+<div class="range-grid" role="group" aria-label="Rangos relativos de riesgo">
+<div class="range"><span class="range-sw r4">R4</span><span><b>Mayor riesgo relativo</b><small>Definición numérica pendiente de validación para el 2.0</small><strong id="count-R4">Sin clasificación</strong></span></div>
+<div class="range"><span class="range-sw r3">R3</span><span><b>Revisión prioritaria</b><small>Definición numérica pendiente de validación para el 2.0</small><strong id="count-R3">Sin clasificación</strong></span></div>
+<div class="range"><span class="range-sw r2">R2</span><span><b>Revisión anual</b><small>Definición numérica pendiente de validación para el 2.0</small><strong id="count-R2">Sin clasificación</strong></span></div>
+<div class="range"><span class="range-sw r1">R1</span><span><b>Seguimiento ordinario</b><small>Definición numérica pendiente de validación para el 2.0</small><strong id="count-R1">Sin clasificación</strong></span></div></div>
+<p class="lead" style="font-size:.91rem;margin-bottom:16px">Estos son cuatro niveles funcionales previstos, no resultados asignados. El portal conserva la cartografía neutral hasta que se calcule y valide la nueva serie del IBP 2.0.</p>
+<div class="tools">
+<label>Zona policial<select id="zone-filter"><option value="all">Todas las zonas</option></select></label>
+<label>Buscar subzona<input id="name-search" type="search" placeholder="Nombre o distrito…"></label>
+<button id="reset" type="button">Restablecer vista</button>
+<label style="display:inline-flex;align-items:center;flex-direction:row;gap:8px;padding:10px 0"><input id="show-zones" type="checkbox" style="min-width:0"> Mostrar límites zonales</label>
+</div>
+<div class="stage">
+<section class="map-shell" aria-label="Mapa del SAT 2.0"><div id="map" role="application" aria-label="Subzonas policiales del Ecuador"></div>
+<div class="map-actions"><button id="view-mainland">Continente</button><button id="view-islands">Galápagos</button><button id="view-all">Todo Ecuador</button></div>
+<div class="caption"><strong>Mapa de cobertura territorial, sin clasificación.</strong> Fuente geométrica: shapefile de las 26 subzonas del Atlas IBP 1.0, simplificado para la web. No se asigna ningún rango R hasta contar con los cálculos verificados del IBP 2.0.</div></section>
+<aside class="info-panel" aria-label="Ficha del territorio">
+<div class="info-head"><small>Ficha territorial · Preparación 2.0</small><h3 id="selected-name">Esmeraldas</h3><div id="selected-zone" class="info-copy">Zona policial</div></div>
+<div class="info-body">
+<div class="record-head"><span id="risk-badge" class="record-class">—</span><span class="record-score"><span id="selected-score">Sin puntuación</span><small id="score-label">IBP 2.0 por calcular</small></span></div>
+<p id="risk-desc" class="info-copy"></p><p id="risk-note" class="info-copy"></p>
+<h3 style="font-size:.98rem;margin:18px 0 3px">Perfil por dimensión</h3><div id="dimensions"></div>
+</div>
+<div class="list-title"><span>Subzonas de referencia</span><span id="shown-count">26 de 26</span></div>
+<div id="risk-list" class="risk-list"></div>
+</aside></div>
+<section class="method" aria-label="Interpretación y reglas del sistema"><h2>Cómo interpretar SAT 2.0</h2>
+<p>El IBP 2.0 introduce indicadores y revisiones de medición que pueden modificar los resultados agregados. El SAT 2.0 utilizará sus resultados para priorizar la revisión territorial y combinará información de inspecciones, servicios, estudios cualitativos y eventos críticos, preservando las fuentes, los periodos y las unidades de observación.</p><p><b>Condición de habilitación:</b> disponer de 29 indicadores con fichas técnicas, cobertura válida, puntuaciones recalculadas y reglas de clasificación aprobadas. La comparación con el IBP 1.0 requiere verificar pesos, fuentes, normalización y equivalencia territorial. Sin equivalencia, la transición R entre versiones permanece «no evaluable».</p><p><a class="link-cta" href="./ibp-2-0.html">Consultar el catálogo de 29 indicadores del IBP 2.0</a></p>
+<p><strong>Referencia metodológica:</strong> Diseño del Sistema de Alertas Tempranas de Bienestar Policial, numeral 5.4, apartado 5.4.6.2 y 5.4.16; índice territorial del piloto 2026. Documento técnico de consultoría, sujeto a validación institucional. Esta página solo publica datos territoriales agregados y no permite identificar situaciones individuales.</p></section>
+</main><footer class="footer"><div class="wrap">IBP y SAT · Policía Nacional del Ecuador · Atlas técnico de consulta · Sin resultados territoriales 2.0 calculados · Prototipo de investigación no equivalente a actos institucionales de alerta.</div></footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script><script src="./sat-portal.js"></script>
+</body></html>

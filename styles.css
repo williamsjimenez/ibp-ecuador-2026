@@ -142,3 +142,11 @@ body,.map-panel,.inspector{background:#fff;color:var(--ink)}
 @media(max-width:560px){.indicator-details{padding:10px 9px}.indicator-caption{gap:6px}.indicator-numbers{font-size:12px}}
 
 .inspector .profile-hint{margin:-5px 22px 12px;font-size:10.5px;line-height:1.5;color:#597b97}
+
+/* Capa interpretativa SAT en el mismo entorno del Atlas IBP. */
+.risk-inline{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:10px;color:#57758c;font-size:11px;line-height:1.55}
+.risk-pill{display:inline-grid;place-items:center;min-width:34px;padding:6px 8px;border-radius:6px;color:#fff;background:#2a6489;font-size:12px;font-weight:850;letter-spacing:.02em}
+.risk-r4{background:#a13f4e}.risk-r3{background:#c38a3b}.risk-r2{background:#73a9c9;color:#0e3551}.risk-r1{background:#2a6489}
+.risk-toggle{border-radius:7px;background:#eef5fa;padding:7px 11px;color:#16466e!important;font-weight:750}
+.map-risk-help{margin-top:9px;padding-top:10px;border-top:1px solid #e0ebf3}
+.map-risk-help span:last-child{flex-basis:100%}

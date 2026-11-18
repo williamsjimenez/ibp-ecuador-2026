@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="description" content="Atlas cartográfico IBP 2.0: cinco dimensiones, 29 indicadores y 26 subzonas, a la espera de resultados recalculados.">
+  <title>Atlas IBP 2.0 | Ecuador</title>
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="./styles.css?v=20261105-sin-frase">
+<link rel="stylesheet" href="./portal-nav.css">
+</head>
+<body>
+  <header class="masthead">
+    <div class="site-wrap mast-inner">
+      <div class="brand"><span class="brand-mark" aria-hidden="true">◈</span><div><span class="eyebrow">ATLAS TERRITORIAL · ECUADOR</span><div class="brand-name">Índice de Bienestar Policial <span>2.0</span></div></div></div>
+      <div class="version">Modelo 2.0 · Revisión de indicadores</div>
+    </div>
+  </header>
+<nav class="pnav" aria-label="Módulos del observatorio"><div class="pnav-inner"><span class="pnav-label">Explorar:</span><a href="./index.html">IBP 1.0</a><a href="./ibp-2-0.html" aria-current="page">IBP 2.0</a><a href="./sat-1-0.html">SAT 1.0</a><a href="./sat-2-0.html">SAT 2.0</a></div></nav>
+
+  <main class="site-wrap">
+    <section class="intro" aria-labelledby="main-title">
+<div><div class="kicker">EXPLORADOR CARTOGRÁFICO · MODELO 2.0</div><h1 id="main-title">El bienestar policial, visto desde el territorio.</h1><p>Se mantiene el mismo entorno cartográfico de las <strong>26 subzonas policiales</strong>, con cinco dimensiones y los <strong>29 indicadores del IBP 2.0</strong>. Todavía no se han recalculado las puntuaciones de la versión actualizada; por ello, los territorios no reciben una calificación numérica ni una clase de riesgo R4–R1.</p></div>
+<div class="status"><div class="status-dot"></div><div><strong>Resultados 2.0 pendientes</strong><span>Modelo metodológico actualizado · Sin puntuaciones territoriales validadas</span></div></div></section>
+    <section aria-label="Estado de resultados del IBP 2.0" style="margin:0 0 24px;padding:20px 24px;border:1px solid #d4e3ef;border-radius:12px;background:#f6faff"><strong style="display:block;color:#1b4f78;margin-bottom:8px">Misma cartografía y navegación; resultados distintos</strong><span style="font-size:.92rem;line-height:1.6;color:#526e84">El IBP 1.0 conserva sus puntuaciones históricas. Este mapa 2.0 no las reutiliza. Consulta el catálogo completo de 29 indicadores para conocer qué cambia, sus fuentes y los pendientes de información.</span> <a class="download" href="./catalogo-ibp-2-0.html" style="display:inline-block;margin:12px 0 0">Consultar 29 indicadores</a></section>
+    <section class="kpis" aria-label="Alcance IBP 2.0">
+<article class="kpi"><span>Unidades territoriales</span><strong>26</strong><small>24 provinciales y 2 metropolitanas</small></article>
+<article class="kpi"><span>Índice global</span><strong>—</strong><small>Pendiente de recálculo 2.0</small></article>
+<article class="kpi"><span>Clasificación de riesgo</span><strong>—</strong><small>R4–R1 aún no asignados</small></article>
+<article class="kpi"><span>Dimensiones analizadas</span><strong>05</strong><small>29 indicadores en el modelo 2.0</small></article></section>
+    <section class="workspace" aria-label="Atlas interactivo">
+      <div class="workspace-header"><div><h2>Mapa de subzonas · IBP 2.0</h2><p>Selecciona una dimensión o una subzona. Los valores estarán disponibles al recalcular la nueva matriz.</p></div><a class="download" href="./catalogo-ibp-2-0.html">Ver fichas de 29 indicadores</a></div><nav id="metrics" class="metrics" aria-label="Dimensión que se representa en el mapa"></nav>
+      <div class="filters">
+<label>Zona policial <select id="zone-filter"><option value="all">Todas las zonas</option></select></label>
+<label>Visualización <select id="scale-filter" disabled><option>Sin puntuación IBP 2.0</option></select></label>
+<label class="toggle"><input id="show-zones" type="checkbox"> <span>Mostrar límites zonales</span></label>
+<label class="toggle risk-toggle" title="Se habilitará tras la validación de los resultados 2.0"><input id="risk-layer" type="checkbox" disabled> <span>Riesgo R4–R1 pendiente</span></label></div><div class="map-layout">
+        <div class="map-panel">
+          <div id="map" role="application" aria-label="Mapa interactivo de los resultados por subzona"></div>
+          <div class="map-top-actions" aria-label="Extensión del mapa"><button id="view-mainland">Continente</button><button id="view-islands">Galápagos</button><button id="view-all">Todo Ecuador</button></div>
+          <div class="map-caption"><div class="legend-name" id="legend-title">Índice global IBP 2.0 · pendiente de cálculo</div>
+<div class="legend-ramp" id="legend-ramp" aria-hidden="true" style="background:#d6e2eb"></div>
+<div class="legend-values"><span id="legend-min">—</span><span id="legend-note">Sin clasificación territorial</span><span id="legend-max">—</span></div>
+<div class="map-benchmark" id="map-benchmark">No hay puntuaciones IBP 2.0 ni umbrales R4–R1 para asignar a las 26 subzonas.</div>
+<div class="risk-inline map-risk-help"><span class="risk-pill risk-r4">R4</span><span class="risk-pill risk-r3">R3</span><span class="risk-pill risk-r2">R2</span><span class="risk-pill risk-r1">R1</span><span>Rangos SAT 2.0: pendientes de calibración y validación con datos 2.0.</span></div>
+</div><section class="metric-reading" aria-label="Interpretación metodológica"><h3>Estado de medición · <span id="reading-territory">Azuay</span></h3><p id="metric-meaning">Este territorio está incluido en el universo de análisis del IBP 2.0.</p><p id="metric-comparison" class="metric-comparison">No hay resultados recalculados para comparar con las demás subzonas.</p><p id="proxy-note" class="proxy-note">No se transfieren resultados IBP 1.0 al IBP 2.0.</p></section>
+        </div>
+        <aside class="inspector" aria-label="Ficha territorial">
+          <div class="inspector-top"><span class="section-tag">FICHA TERRITORIAL · 2.0</span><h3 id="selected-name">Azuay</h3><div class="selected-zone" id="selected-zone">Zona 6</div><div class="risk-inline"><span id="selected-risk" class="risk-pill" style="background:#879cae">—</span><span id="selected-risk-description">Riesgo R4–R1 por determinar</span></div></div><div class="focus"><div class="focus-value"><span id="focus-label">Índice global IBP 2.0</span><strong id="focus-score">—</strong><small>pendiente de cálculo</small></div><div class="focus-bench"><span>Media subzonal <strong id="focus-mean">—</strong></span><span>Diferencia <strong id="focus-diff">—</strong></span><span>Puesto nacional <strong id="focus-rank">—</strong></span></div></div><h4>Perfil de dimensiones</h4>
+          <p class="profile-hint">Selecciona una dimensión para consultar su alcance. Los valores 2.0 siguen pendientes de recálculo.</p>
+          <div class="profile-guide"><span>Modelo IBP 2.0 · 29 indicadores</span></div>
+          <div id="profile" class="profile"></div>
+          <div class="subzone-browser"><div class="subzone-browser-header"><h4 id="ranking-title">Subzonas del IBP 2.0</h4><span id="list-count">26 de 26</span></div><input id="subzone-search" type="search" placeholder="Buscar subzona…" aria-label="Buscar subzona"><div id="subzone-list" class="subzone-list" aria-label="Listado de 26 subzonas"></div><p class="ranking-footnote">Orden alfabético. La clasificación solo se publicará después del recálculo.</p></div></aside>
+      </div>
+    </section>
+    <section class="reading-notes"><div><span class="section-tag">CÓMO INTERPRETAR</span><h2>Arquitectura del IBP 2.0 y su vínculo con el riesgo.</h2><p>El catálogo integra 29 indicadores organizados en las cinco dimensiones del modelo. Esta página conserva las 26 geometrías utilizadas en el atlas piloto, pero deliberadamente no asigna puntuaciones a las subzonas. Los rangos R4–R1 del SAT 1.0 tampoco pueden trasladarse automáticamente al SAT 2.0 sin recálculo de los indicadores y validación metodológica.</p></div><div class="source-panel"><h3>Fuente y trazabilidad</h3><p><strong>Indicadores:</strong> Guía de actualización del IBP 2.0 y su matriz de cambios.</p><p><strong>Cartografía:</strong> mismas 26 subzonas del Atlas IBP 1.0, sin emplear sus puntuaciones como 2.0.</p><a href="./catalogo-ibp-2-0.html">Consultar catálogo de indicadores 2.0</a></div></section>
+  </main>
+  <footer class="footer"><div class="site-wrap footer-inner"><span>IBP 2.0 · Atlas metodológico en validación</span><span>Geometrías de referencia · Puntuaciones 2.0 pendientes</span></div></footer>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="./datos-ibp-2-0.js"></script>
+</body>
+</html>

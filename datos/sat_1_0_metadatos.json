@@ -1,0 +1,44 @@
+{
+  "conjunto": "Clasificación territorial SAT 1.0",
+  "version": "1.0",
+  "fecha_linea_base": "2026-11-04",
+  "fuente_puntuaciones": "datos/resultados_26_subzonas.csv en el repositorio Atlas IBP 1.0",
+  "fuente_reglas": "20261113_SAT(1).docx, apartado 5.4.6.2 (documento técnico de consultoría)",
+  "unidad": "subzona policial",
+  "n": 26,
+  "escala": [
+    0,
+    100
+  ],
+  "sentido": "mayor puntuación = bienestar más favorable",
+  "cortes": {
+    "R4": {
+      "min": null,
+      "max_inclusive": 44.9593,
+      "n": 7
+    },
+    "R3": {
+      "min_exclusive": 44.9593,
+      "max_inclusive": 47.2917,
+      "n": 6
+    },
+    "R2": {
+      "min_exclusive": 47.2917,
+      "max_inclusive": 49.5282,
+      "n": 6
+    },
+    "R1": {
+      "min_exclusive": 49.5282,
+      "max": 100,
+      "n": 7
+    }
+  },
+  "reglas": "Cortes fijos del piloto 2026; no extrapolar a otras versiones sin validación de equivalencia.",
+  "limitaciones": [
+    "Clasificación relativa no representa daño clínico ni incumplimiento comprobado",
+    "Los resultados del IBP 1.0 no tienen representatividad estadística subzonal acreditada",
+    "Los indicadores de encuesta comparten en algunos casos valores provinciales o zonales",
+    "La categoría R4 es un disparador territorial propuesto, no acredita emisión institucional de alerta",
+    "No están disponibles series comparables para calcular transiciones interanuales"
+  ]
+}
